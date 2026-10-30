@@ -1,0 +1,285 @@
+[
+ {
+  "step": "start",
+  "at": "2026-10-30T15:36:20Z",
+  "data": {
+   "agents": [
+    {
+     "id": "ads",
+     "name": "Ads agent",
+     "job": "Buys ad placements",
+     "tier": "active",
+     "score": 70,
+     "limit_usd": 40.0,
+     "review_over_usd": 500.0,
+     "clean_count": 0,
+     "last_txn": "",
+     "status_note": "",
+     "tools": [
+      "catalog_search",
+      "paypal_purchase",
+      "paypal_get_capture"
+     ],
+     "paypal_tools": [
+      "paypal_purchase",
+      "paypal_get_capture"
+     ]
+    },
+    {
+     "id": "refunds",
+     "name": "Refunds agent",
+     "job": "Handles returns and refunds",
+     "tier": "active",
+     "score": 70,
+     "limit_usd": 25.0,
+     "review_over_usd": 500.0,
+     "clean_count": 0,
+     "last_txn": "",
+     "status_note": "",
+     "tools": [
+      "catalog_search",
+      "paypal_refund_capture",
+      "paypal_get_capture",
+      "paypal_list_disputes"
+     ],
+     "paypal_tools": [
+      "paypal_refund_capture",
+      "paypal_get_capture",
+      "paypal_list_disputes"
+     ]
+    },
+    {
+     "id": "supplies",
+     "name": "Supplies agent",
+     "job": "Reorders cafe stock",
+     "tier": "active",
+     "score": 70,
+     "limit_usd": 100.0,
+     "review_over_usd": 500.0,
+     "clean_count": 0,
+     "last_txn": "",
+     "status_note": "",
+     "tools": [
+      "catalog_search",
+      "paypal_purchase",
+      "paypal_get_capture"
+     ],
+     "paypal_tools": [
+      "paypal_purchase",
+      "paypal_get_capture"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "step": "supplies_buys",
+  "at": "2026-10-30T15:36:26Z",
+  "data": {
+   "banner": "Scripted fallback ran: model unavailable (NotFoundError: Error code: 404)"
+  }
+ },
+ {
+  "step": "goods_received",
+  "at": "2026-10-30T15:36:27Z",
+  "data": {
+   "banner": "received BEAN-DECAF-1KG, stock sheet requires BEAN-HOUSE-1KG"
+  }
+ },
+ {
+  "step": "refund",
+  "at": "2026-10-30T15:36:31Z",
+  "data": {
+   "banner": "Scripted fallback ran: model unavailable (NotFoundError: Error code: 404)"
+  }
+ },
+ {
+  "step": "reconcile",
+  "at": "2026-10-30T15:36:33Z",
+  "data": {
+   "banner": "1 verified change(s) applied.",
+   "supplies": {
+    "id": "supplies",
+    "name": "Supplies agent",
+    "job": "Reorders cafe stock",
+    "tier": "fired",
+    "score": 30,
+    "limit_usd": 100.0,
+    "review_over_usd": 500.0,
+    "clean_count": 0,
+    "last_txn": "5J371796YA449162N",
+    "status_note": "full_refund: 5 x BEAN-DECAF-1KG for $90.00, PayPal status REFUNDED",
+    "tools": [
+     "catalog_search"
+    ],
+    "paypal_tools": []
+   }
+  }
+ },
+ {
+  "step": "direct_retry",
+  "at": "2026-10-30T15:36:34Z",
+  "data": {
+   "banner": "Gateway answered 403: tool not available to supplies at tier fired"
+  }
+ },
+ {
+  "step": "ads_over_limit",
+  "at": "2026-10-30T15:36:36Z",
+  "data": {
+   "banner": "Scripted fallback ran: model unavailable (NotFoundError: Error code: 404)",
+   "ads": {
+    "id": "ads",
+    "name": "Ads agent",
+    "job": "Buys ad placements",
+    "tier": "active",
+    "score": 65,
+    "limit_usd": 40.0,
+    "review_over_usd": 500.0,
+    "clean_count": 0,
+    "last_txn": "gateway-25",
+    "status_note": "over_limit_attempt: tried $60.00 against $40.00",
+    "tools": [
+     "catalog_search",
+     "paypal_purchase",
+     "paypal_get_capture"
+    ],
+    "paypal_tools": [
+     "paypal_purchase",
+     "paypal_get_capture"
+    ]
+   }
+  }
+ },
+ {
+  "step": "limit_edited_in_grid",
+  "at": "2026-10-30T15:36:37Z",
+  "data": {
+   "ads": {
+    "id": "ads",
+    "name": "Ads agent",
+    "job": "Buys ad placements",
+    "tier": "active",
+    "score": 65,
+    "limit_usd": 75.0,
+    "review_over_usd": 500.0,
+    "clean_count": 0,
+    "last_txn": "gateway-25",
+    "status_note": "over_limit_attempt: tried $60.00 against $40.00",
+    "tools": [
+     "catalog_search",
+     "paypal_purchase",
+     "paypal_get_capture"
+    ],
+    "paypal_tools": [
+     "paypal_purchase",
+     "paypal_get_capture"
+    ]
+   }
+  }
+ },
+ {
+  "step": "ads_clears",
+  "at": "2026-10-30T15:36:43Z",
+  "data": {
+   "banner": "Scripted fallback ran: model unavailable (NotFoundError: Error code: 404)",
+   "ads": {
+    "id": "ads",
+    "name": "Ads agent",
+    "job": "Buys ad placements",
+    "tier": "active",
+    "score": 65,
+    "limit_usd": 75.0,
+    "review_over_usd": 500.0,
+    "clean_count": 0,
+    "last_txn": "gateway-25",
+    "status_note": "over_limit_attempt: tried $60.00 against $40.00",
+    "tools": [
+     "catalog_search",
+     "paypal_purchase",
+     "paypal_get_capture"
+    ],
+    "paypal_tools": [
+     "paypal_purchase",
+     "paypal_get_capture"
+    ]
+   }
+  }
+ },
+ {
+  "step": "handover",
+  "at": "2026-10-30T15:36:49Z",
+  "data": {
+   "banner": "Scripted fallback ran: model unavailable (NotFoundError: Error code: 404)"
+  }
+ },
+ {
+  "step": "readback",
+  "at": "2026-10-30T15:36:57Z",
+  "data": {
+   "banner": "3 capture(s) read back."
+  }
+ },
+ {
+  "step": "readback_detail",
+  "at": "2026-10-30T15:37:00Z",
+  "data": {
+   "source": "PayPal sandbox, read live",
+   "captures": [
+    {
+     "capture_id": "5J371796YA449162N",
+     "agent_id": "supplies",
+     "sku": "BEAN-DECAF-1KG",
+     "amount_usd": 90.0,
+     "paypal_status": "REFUNDED",
+     "refund_id": "1VW64834XS8143224"
+    },
+    {
+     "capture_id": "2G547930HW638531K",
+     "agent_id": "ads",
+     "sku": "AD-LOCAL-WEEK",
+     "amount_usd": 60.0,
+     "paypal_status": "COMPLETED",
+     "refund_id": ""
+    },
+    {
+     "capture_id": "9JA453545L2559149",
+     "agent_id": "refunds",
+     "sku": "BEAN-HOUSE-1KG",
+     "amount_usd": 120.0,
+     "paypal_status": "COMPLETED",
+     "refund_id": ""
+    }
+   ],
+   "disputes": 0
+  }
+ },
+ {
+  "step": "reinstate",
+  "at": "2026-10-30T15:37:00Z",
+  "data": {
+   "banner": "Reinstated on demoted terms.",
+   "supplies": {
+    "id": "supplies",
+    "name": "Supplies agent",
+    "job": "Reorders cafe stock",
+    "tier": "demoted",
+    "score": 30,
+    "limit_usd": 50.0,
+    "review_over_usd": 500.0,
+    "clean_count": 0,
+    "last_txn": "5J371796YA449162N",
+    "status_note": "reinstated by owner: The brief was stale, so this is on the brief. Back on demoted terms.",
+    "tools": [
+     "catalog_search",
+     "paypal_purchase",
+     "paypal_get_capture"
+    ],
+    "paypal_tools": [
+     "paypal_purchase",
+     "paypal_get_capture"
+    ]
+   }
+  }
+ }
+]

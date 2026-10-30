@@ -1,5 +1,49 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Probation</title></head>
-<body><p>Probation is starting.</p></body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Probation</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@36.2.0/dist/ag-grid-community.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ag-studio@3.0.0/dist/umd/ag-studio.min.js"></script>
+</head>
+<body>
+<header>
+  <div><h1>Probation</h1><p>Agents earn their spending power from what PayPal shows.</p></div>
+  <div class="head-right"><span class="pill">PayPal sandbox</span><button id="reset" class="quiet">Start over</button></div>
+</header>
+<div id="banner" role="status" hidden></div>
+<main>
+  <section class="flow" aria-label="Owner flow">
+    <h2>Owner flow</h2>
+    <ol id="steps"></ol>
+  </section>
+  <div class="work">
+    <nav role="tablist">
+      <button role="tab" data-tab="team" aria-selected="true">Team</button>
+      <button role="tab" data-tab="views" aria-selected="false">Risk and spend</button>
+      <button role="tab" data-tab="activity" aria-selected="false">Activity</button>
+    </nav>
+    <section id="tab-team">
+      <h2>Agents</h2>
+      <p class="hint">Click a limit to edit it. The gateway reads it on the agent's next call.</p>
+      <div id="roster" class="grid-box"></div>
+      <div id="tools"></div>
+      <h2>Evidence</h2>
+      <div id="evidence"></div>
+    </section>
+    <section id="tab-views" hidden>
+      <h2>Risk and spend, in AG Studio</h2>
+      <div id="views-empty" class="empty">No purchases yet. Run the supplies agent to fill these views.</div>
+      <div id="studio"></div>
+    </section>
+    <section id="tab-activity" hidden>
+      <h2>Gateway log</h2>
+      <div id="log" class="grid-box tall"></div>
+    </section>
+  </div>
+</main>
+<script src="app.js"></script>
+</body>
 </html>
