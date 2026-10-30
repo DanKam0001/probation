@@ -1,8 +1,14 @@
 const $ = (id) => document.getElementById(id);
-let state = null, readback = null, busy = false, roster, log, studio;
+let state = null, readback = null, busy = false, roster, log, riskGrid, spendGrid, ownerToken = "";
+const charts = {}, aiViews = [];
 
 async function api(path, options = {}) {
-  const r = await fetch(path, { headers: { "Content-Type": "application/json" }, ...options });
+  const send = () => fetch(path, { ...options, headers: { "Content-Type": "application/json", "X-Owner-Token": ownerToken } });
+  let r = await send();
+  if (r.status === 401) {
+    ownerToken = prompt("Owner token for this deployment:") || "";
+    r = await send();
+  }
   const body = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail || body));
   return body;
@@ -147,6 +153,9 @@ function makeGrids() {
       refresh();
     },
   });
+  const plain = { defaultColDef: { flex: 1, resizable: true, sortable: true }, overlayNoRowsTemplate: "Nothing yet." };
+  riskGrid = G.createGrid($("risk-grid"), { ...plain, columnDefs: ["Agent", "Status", "Score", "Limit", "PayPal tools"].map((field) => ({ field })) });
+  spendGrid = G.createGrid($("spend-grid"), { ...plain, columnDefs: ["Agent", "SKU", "PayPal status", "Amount"].map((field) => ({ field })) });
   log = G.createGrid($("log"), {
     getRowId: (p) => String(p.data.id), defaultColDef: { resizable: true, sortable: true, filter: true },
     overlayNoRowsTemplate: "No gateway calls yet.",
@@ -155,31 +164,38 @@ function makeGrids() {
   });
 }
 
-function studioData() {
-  return { sources: [
-    { id: "agents", data: state.agents.map((a) => ({ Agent: a.name, Status: a.tier, Score: a.score, Limit: a.limit_usd, "PayPal tools": a.paypal_tools.length })) },
-    { id: "purchases", data: state.purchases.map((p) => ({ Agent: p.agent_id, SKU: p.sku, Amount: p.amount_usd, "PayPal status": p.paypal_status })) },
-  ] };
+function tables() {
+  return {
+    agents: state.agents.map((a) => ({ Agent: a.name, Status: a.tier, Score: a.score, Limit: a.limit_usd, "PayPal tools": a.paypal_tools.length })),
+    purchases: state.purchases.map((p) => ({ Agent: p.agent_id, SKU: p.sku, Amount: p.amount_usd, "PayPal status": p.paypal_status })),
+  };
 }
 
-const STUDIO_STATE = { selectedPageId: "views", pages: [
-  { id: "views", name: "Risk and spend", widgets: {
-      r1: { type: "grid", dataMapping: { cols: [{ id: "agents.Agent" }, { id: "agents.Status" }, { id: "agents.Score" }, { id: "agents.Limit" }, { id: "agents.PayPal tools" }] } },
-      r2: { type: "column-chart-grouped", dataMapping: { categoryKey: [{ id: "agents.Agent" }], valueKey: [{ id: "agents.Score", aggregation: "sum" }] } },
-      s1: { type: "column-chart-grouped", dataMapping: { categoryKey: [{ id: "purchases.PayPal status" }], valueKey: [{ id: "purchases.Amount", aggregation: "sum" }] } },
-      s2: { type: "grid", dataMapping: { cols: [{ id: "purchases.Agent" }, { id: "purchases.SKU" }, { id: "purchases.PayPal status" }, { id: "purchases.Amount", aggregation: "sum" }] } } },
-    widgetLayout: { r1: { xTrack: 0, yTrack: 0, xSpan: 12, ySpan: 12 }, r2: { xTrack: 12, yTrack: 0, xSpan: 12, ySpan: 12 },
-      s1: { xTrack: 0, yTrack: 12, xSpan: 12, ySpan: 14 }, s2: { xTrack: 12, yTrack: 12, xSpan: 12, ySpan: 14 } } },
-] };
+function totals(rows, category, value) {
+  const sums = new Map();
+  rows.forEach((r) => sums.set(r[category], (sums.get(r[category]) || 0) + r[value]));
+  return [...sums].map(([k, v]) => ({ [category]: k, [value]: v }));
+}
 
-function renderStudio() {
+function drawChart(id, title, rows, category, value) {
+  const options = { container: $(id), title: { text: title }, data: totals(rows, category, value),
+    series: [{ type: "bar", xKey: category, yKey: value, yName: value }], legend: { enabled: false } };
+  if (charts[id]) charts[id].update(options);
+  else charts[id] = agCharts.AgCharts.create(options);
+}
+
+function renderViews() {
   const has = state.purchases.length > 0;
-  $("views-empty").hidden = has; $("studio").hidden = !has;
+  $("views-empty").hidden = has; $("views").hidden = !has;
   if (!has || $("tab-views").hidden) return;
+  const t = tables();
+  riskGrid.setGridOption("rowData", t.agents);
+  spendGrid.setGridOption("rowData", t.purchases);
   try {
-    if (!studio) studio = agStudio.createStudio($("studio"), { mode: "view", initialState: STUDIO_STATE, data: studioData(), layout: { columns: 24, rowHeight: 24 } });
-    else studio.setProperty("data", studioData());
-  } catch (e) { banner(`AG Studio could not load: ${e.message}`, true); }
+    drawChart("risk-chart", "Score by agent", t.agents, "Agent", "Score");
+    drawChart("spend-chart", "Spend by PayPal status", t.purchases, "PayPal status", "Amount");
+    aiViews.forEach((v) => drawChart(v.id, v.title, t[v.table], v.category, v.value));
+  } catch (e) { banner(`A chart could not be drawn: ${e.message}`, true); }
 }
 
 async function refresh() {
@@ -187,28 +203,27 @@ async function refresh() {
     state = await api("/api/state");
     roster.setGridOption("rowData", state.agents);
     log.setGridOption("rowData", state.gateway);
-    renderSteps(); renderTools(); renderEvidence(); renderStudio();
+    renderSteps(); renderTools(); renderEvidence(); renderViews();
   } catch (e) { banner(`Could not reach Probation: ${e.message}`, true); }
 }
 
 document.querySelectorAll("nav button").forEach((b) => (b.onclick = () => {
   document.querySelectorAll("nav button").forEach((x) => x.setAttribute("aria-selected", x === b));
   ["team", "views", "activity"].forEach((t) => ($(`tab-${t}`).hidden = t !== b.dataset.tab));
-  renderStudio();
+  renderViews();
 }));
 $("ask-view").onsubmit = async (e) => {
   e.preventDefault();
   const question = $("ask-text").value.trim();
-  if (!question || !studio) return;
+  if (!question) return;
   banner("Working...");
   try {
     const v = await api("/api/views/ask", { method: "POST", body: JSON.stringify({ question }) });
-    const now = studio.getState(), page = now.pages[0], id = `ai${Date.now()}`;
-    const count = Object.keys(page.widgets).filter((k) => k.startsWith("ai")).length;
-    studio.setState({ ...now, pages: [{ ...page,
-      widgets: { ...page.widgets, [id]: { type: "column-chart-grouped", dataMapping: {
-        categoryKey: [{ id: `${v.table}.${v.category}` }], valueKey: [{ id: `${v.table}.${v.value}`, aggregation: "sum" }] } } },
-      widgetLayout: { ...page.widgetLayout, [id]: { xTrack: count % 2 ? 12 : 0, yTrack: 26 + 14 * Math.floor(count / 2), xSpan: 12, ySpan: 14 } } }] });
+    const box = document.createElement("div");
+    box.id = `ai-${aiViews.length + 1}`; box.className = "view";
+    $("views").append(box);
+    aiViews.push({ ...v, id: box.id });
+    renderViews();
     banner(`Added "${v.title}": ${v.value} by ${v.category}.`);
   } catch (err) { banner(err.message, true); }
 };

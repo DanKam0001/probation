@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: probation
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn probation.main:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: PAYPAL_CLIENT_ID
+        sync: false            # sandbox credentials, set in the dashboard, never committed
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: NEBIUS_API_KEY
+        sync: false
+      - key: NEBIUS_BASE_URL
+        value: https://api.tokenfactory.nebius.com/v1
+      - key: OWNER_TOKEN
+        sync: false            # required for owner actions; without it they are open to anyone
+      - key: AGENT_SPEND_CAP_USD
+        value: "5"             # total model spend this server instance may make
+      - key: PYTHON_VERSION
+        value: "3.12.10"

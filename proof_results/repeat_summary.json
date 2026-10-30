@@ -1,5 +1,5 @@
 {
- "run_at": "2026-10-30T15:50:22Z",
+ "run_at": "2026-10-30T16:02:20Z",
  "attempts": 3,
  "passed": 3,
  "results": [
@@ -7,21 +7,21 @@
    "attempt": 1,
    "passed": true,
    "tail": [
-    "ai view: {'banner': 'Added \"Total Amount Spent by Each Agent\": Amount by Agent.', 'is_error': False}"
+    "ai view: {'banner': 'Added \"Total Spending by Agent\": Amount by Agent.', 'is_error': False, 'charts_before': 2, 'charts_after': 3}"
    ]
   },
   {
    "attempt": 2,
    "passed": true,
    "tail": [
-    "ai view: {'banner': 'Added \"Total Amount Spent by Each Agent\": Amount by Agent.', 'is_error': False}"
+    "ai view: {'banner': 'Added \"Total Amount Spent by Each Agent\": Amount by Agent.', 'is_error': False, 'charts_before': 2, 'charts_after': 3}"
    ]
   },
   {
    "attempt": 3,
    "passed": true,
    "tail": [
-    "ai view: {'banner': 'Added \"Total Amount Spent by Each Agent\": Amount by Agent.', 'is_error': False}"
+    "ai view: {'banner': 'Added \"Total Spending by Agent\": Amount by Agent.', 'is_error': False, 'charts_before': 2, 'charts_after': 3}"
    ]
   }
  ]

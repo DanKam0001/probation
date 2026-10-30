@@ -50,7 +50,10 @@ VIEW_SYSTEM = ("You choose one chart for a small business owner. Tables and fiel
 
 def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -> FastAPI:
     app = FastAPI(title="Probation")
-    store = store or Store(os.environ.get("PROBATION_DB", str(ROOT / "runs" / "probation.db")))
+    if store is None:
+        path = Path(os.environ.get("PROBATION_DB", ROOT / "runs" / "probation.db"))
+        path.parent.mkdir(parents=True, exist_ok=True)
+        store = Store(str(path))
     paypal = paypal or PayPal()
     app.state.store = store
     app.include_router(gateway.build_router(store, paypal))
@@ -220,7 +223,7 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
 
     @app.post("/api/views/ask", dependencies=[Depends(owner)])
     def ask_view(body: ViewAsk):
-        """The model picks fields; only a spec that names real fields reaches AG Studio."""
+        """The model picks fields; only a spec that names real fields reaches a chart."""
         try:
             spec = agents.nc.chat_json("super", VIEW_SYSTEM, body.question, agents.budget,
                                        {"title": str, "table": str, "category": str, "value": str}, max_tokens=200)

@@ -143,15 +143,5 @@
    "created": 1793374892.5907817
   }
  ],
- "wrong_spend_refunded_usd": 0,
- "studio_text_found": "Agent\nStatus\nScore\nLimit\nPay Pal Tools\nAds agent\nactive\n70\n75\n2\nRefunds agent\nactive\n70\n25\n3\nSupplies agent\nactive\n70\n100\n2\n\u00a0\n\u00a0\nAgent\nSKU\nPay Pal Status\nAmount (sum)\nsupplies\nBEAN-DECAF-1KG\nCOMPLETED\n90\nTotal\n90\nFilters\nNo filters available",
- "browser_console_errors": [
-  "****************************************************************************************************************************",
-  "************************************************** AG Studio Core License **************************************************",
-  "************************************************** License Key Not Found ***************************************************",
-  "* All AG Studio Core features are unlocked for trial.                                                                      *",
-  "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *",
-  "****************************************************************************************************************************",
-  "****************************************************************************************************************************"
- ]
+ "wrong_spend_refunded_usd": 0
 }

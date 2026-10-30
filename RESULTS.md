@@ -16,28 +16,28 @@ model did on this brief, not how often agents err in general.
 
 ## Recorded run
 
-`demo_run.json` (2026-10-30T15:50:22Z): 5 of 5 agent runs by the model, 0 by the scripted fallback.
+`demo_run.json` (2026-10-30T16:02:20Z): 5 of 5 agent runs by the model, 0 by the scripted fallback.
 
 | Step | Result | Reference |
 | --- | --- | --- |
-| Supplies agent buys wrong stock | 5 x BEAN-DECAF-1KG for $90.00, PayPal now shows REFUNDED | capture 6RW423545K3061939, refund 9YM89059RV602593K |
-| Firing | Score change of -40, PayPal tools removed | capture 6RW423545K3061939 |
+| Supplies agent buys wrong stock | 5 x BEAN-DECAF-1KG for $90.00, PayPal now shows REFUNDED | capture 6LT00268SK432632B, refund 8DU07628G2094761X |
+| Firing | Score change of -40, PayPal tools removed | capture 6LT00268SK432632B |
 | Direct retry by the fired agent | HTTP 403 at the gateway | `denied_gateway_calls` |
-| Ads agent over its limit | HTTP 403, $60.00 against $40.00, score change of -5 | gateway-125 |
+| Ads agent over its limit | HTTP 403, $60.00 against $40.00, score change of -5 | gateway-222 |
 | Owner edits the ads limit in the grid | $40.00 to $75.00, logged | `decisions` |
-| Ads agent retries | $60.00, COMPLETED | capture 9XH61529NR412922E |
-| Refunds agent takes over the reorder | 5 x BEAN-HOUSE-1KG for $120.00, COMPLETED | capture 6CA40364B4731422S |
+| Ads agent retries | $60.00, COMPLETED | capture 6P785276EH083734M |
+| Refunds agent takes over the reorder | 5 x BEAN-HOUSE-1KG for $120.00, COMPLETED | capture 13C63140V4985524B |
 | Owner reinstates the supplies agent | Status demoted, limit $50.00, evidence logged | `decisions` |
-| Owner asks for a new view in plain English | Model chose Amount by Agent, added to AG Studio | `13b_ai_view.png` |
+| Owner asks for a new view in plain English | Model chose Amount by Agent, drawn as an AG Charts chart | `13b_ai_view.png` |
 
 Wrong spend refunded in this run: $90.00. PayPal disputes read back: 0. End scores: ads 70, refunds 75, supplies 30.
 
-Model spend across the 3 repeat runs: $0.0116253, calculated by the app from token counts and the kit's prices. It is
-not the proxy's own meter.
+Model spend across the 6 full runs on this server: $0.0234648, calculated by the app from token counts and the kit's
+prices. It is not the proxy's own meter.
 
 ## Repeatability
 
-`repeat_summary.json`: 3 of 3 full runs passed after the fixes below. Each run stops and saves a failed-run file if a
+`repeat_summary.json`: 3 of 3 full runs passed on the final build. Each run stops and saves a failed-run file if a
 real outcome is missing.
 
 ## What failed
@@ -51,4 +51,5 @@ real outcome is missing.
 - **Disputes:** the API is read on every reconcile, but no dispute existed, so the dispute rules have not run on a
   live one.
 - **Promotion and owner review routing** are covered by offline tests only. They did not occur in these runs.
-- **Browser console:** AG Studio's licence notice appears, because no key is set.
+
+Browser console errors in each of the 3 repeat runs: 0.

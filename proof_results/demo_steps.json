@@ -1,7 +1,7 @@
 [
  {
   "step": "start",
-  "at": "2026-10-30T15:49:05Z",
+  "at": "2026-10-30T16:00:58Z",
   "data": {
    "agents": [
     {
@@ -74,28 +74,28 @@
  },
  {
   "step": "supplies_buys",
-  "at": "2026-10-30T15:49:16Z",
+  "at": "2026-10-30T16:01:08Z",
   "data": {
-   "banner": "Model run. Order placed for 5\u202fkg decaf coffee beans at $90 total via PayPal."
+   "banner": "Model run. Ordered 5\u202fkg of decaf coffee beans via PayPal at $90 total."
   }
  },
  {
   "step": "goods_received",
-  "at": "2026-10-30T15:49:17Z",
+  "at": "2026-10-30T16:01:09Z",
   "data": {
    "banner": "received BEAN-DECAF-1KG, stock sheet requires BEAN-HOUSE-1KG"
   }
  },
  {
   "step": "refund",
-  "at": "2026-10-30T15:49:27Z",
+  "at": "2026-10-30T16:01:19Z",
   "data": {
    "banner": "Model run. Outcome: refunded."
   }
  },
  {
   "step": "reconcile",
-  "at": "2026-10-30T15:49:29Z",
+  "at": "2026-10-30T16:01:22Z",
   "data": {
    "banner": "1 verified change(s) applied.",
    "supplies": {
@@ -107,7 +107,7 @@
     "limit_usd": 100.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "6RW423545K3061939",
+    "last_txn": "6LT00268SK432632B",
     "status_note": "full_refund: 5 x BEAN-DECAF-1KG for $90.00, PayPal status REFUNDED",
     "tools": [
      "catalog_search"
@@ -118,14 +118,14 @@
  },
  {
   "step": "direct_retry",
-  "at": "2026-10-30T15:49:30Z",
+  "at": "2026-10-30T16:01:23Z",
   "data": {
    "banner": "Gateway answered 403: tool not available to supplies at tier fired"
   }
  },
  {
   "step": "ads_over_limit",
-  "at": "2026-10-30T15:49:37Z",
+  "at": "2026-10-30T16:01:29Z",
   "data": {
    "banner": "Model run. Purchase denied due to spending limit exceeded.",
    "ads": {
@@ -137,7 +137,7 @@
     "limit_usd": 40.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "gateway-125",
+    "last_txn": "gateway-222",
     "status_note": "over_limit_attempt: tried $60.00 against $40.00",
     "tools": [
      "catalog_search",
@@ -153,7 +153,7 @@
  },
  {
   "step": "limit_edited_in_grid",
-  "at": "2026-10-30T15:49:37Z",
+  "at": "2026-10-30T16:01:29Z",
   "data": {
    "ads": {
     "id": "ads",
@@ -164,7 +164,7 @@
     "limit_usd": 75.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "gateway-125",
+    "last_txn": "gateway-222",
     "status_note": "over_limit_attempt: tried $60.00 against $40.00",
     "tools": [
      "catalog_search",
@@ -180,9 +180,9 @@
  },
  {
   "step": "ads_clears",
-  "at": "2026-10-30T15:49:47Z",
+  "at": "2026-10-30T16:01:40Z",
   "data": {
-   "banner": "Model run. Purchase completed successfully.",
+   "banner": "Model run. One week of local search advertising purchased successfully.",
    "ads": {
     "id": "ads",
     "name": "Ads agent",
@@ -192,7 +192,7 @@
     "limit_usd": 75.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "gateway-125",
+    "last_txn": "gateway-222",
     "status_note": "over_limit_attempt: tried $60.00 against $40.00",
     "tools": [
      "catalog_search",
@@ -208,34 +208,34 @@
  },
  {
   "step": "handover",
-  "at": "2026-10-30T15:49:58Z",
+  "at": "2026-10-30T16:01:52Z",
   "data": {
    "banner": "Model run. Outcome: reorder bought."
   }
  },
  {
   "step": "readback",
-  "at": "2026-10-30T15:50:05Z",
+  "at": "2026-10-30T16:02:02Z",
   "data": {
    "banner": "3 capture(s) read back."
   }
  },
  {
   "step": "readback_detail",
-  "at": "2026-10-30T15:50:09Z",
+  "at": "2026-10-30T16:02:07Z",
   "data": {
    "source": "PayPal sandbox, read live",
    "captures": [
     {
-     "capture_id": "6RW423545K3061939",
+     "capture_id": "6LT00268SK432632B",
      "agent_id": "supplies",
      "sku": "BEAN-DECAF-1KG",
      "amount_usd": 90.0,
      "paypal_status": "REFUNDED",
-     "refund_id": "9YM89059RV602593K"
+     "refund_id": "8DU07628G2094761X"
     },
     {
-     "capture_id": "9XH61529NR412922E",
+     "capture_id": "6P785276EH083734M",
      "agent_id": "ads",
      "sku": "AD-LOCAL-WEEK",
      "amount_usd": 60.0,
@@ -243,7 +243,7 @@
      "refund_id": ""
     },
     {
-     "capture_id": "6CA40364B4731422S",
+     "capture_id": "13C63140V4985524B",
      "agent_id": "refunds",
      "sku": "BEAN-HOUSE-1KG",
      "amount_usd": 120.0,
@@ -256,7 +256,7 @@
  },
  {
   "step": "reinstate",
-  "at": "2026-10-30T15:50:09Z",
+  "at": "2026-10-30T16:02:08Z",
   "data": {
    "banner": "Reinstated on demoted terms.",
    "supplies": {
@@ -268,7 +268,7 @@
     "limit_usd": 50.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "6RW423545K3061939",
+    "last_txn": "6LT00268SK432632B",
     "status_note": "reinstated by owner: The brief was stale, so this is on the brief. Back on demoted terms.",
     "tools": [
      "catalog_search",
@@ -284,10 +284,12 @@
  },
  {
   "step": "ai_view",
-  "at": "2026-10-30T15:50:21Z",
+  "at": "2026-10-30T16:02:19Z",
   "data": {
-   "banner": "Added \"Total Amount Spent by Each Agent\": Amount by Agent.",
-   "is_error": false
+   "banner": "Added \"Total Spending by Agent\": Amount by Agent.",
+   "is_error": false,
+   "charts_before": 2,
+   "charts_after": 3
   }
  }
 ]

@@ -14,9 +14,9 @@ hand over the work, and reinstate the agent, and each of those decisions is logg
   `custom_id`, and every score change carries a transaction ID or gateway log ID.
 - **Ladder.** Clean settlements promote, partial refunds and open disputes demote, and full refunds and lost disputes
   fire. Over-limit attempts cost score.
-- **Owner console.** An editable AG Grid roster, a guided flow, an evidence trail, and AG Studio risk and spend views.
-  The owner can ask for a new view in plain English: the model picks from known fields, and the server rejects
-  anything else before it reaches AG Studio.
+- **Owner console.** An editable AG Grid roster, a guided flow, an evidence trail, and risk and spend views built with
+  AG Grid Community and AG Charts Community. The owner can ask for a new view in plain English: the model picks from
+  known fields, and the server rejects anything else before it reaches a chart.
 
 ## Run it
 
@@ -36,8 +36,12 @@ require a token on owner actions. Open http://127.0.0.1:8000 and follow the Owne
 - The gateway calls PayPal's REST APIs directly. It does not use the PayPal Agent Toolkit or MCP server.
 - In the sandbox, the app's merchant account plays the supplier and PayPal's test card plays the business's payment
   method.
-- AG Studio is commercial software. It runs here without a key, so it shows a watermark and console notices. Its
-  widgets have no cell editing, so the editable roster is AG Grid Community. AG Studio's AI panel needs a licensed
-  key and is not used.
+- A free Render instance has temporary storage, so agent state resets when the service restarts. PayPal keeps its
+  records.
 
-Results are in [RESULTS.md](RESULTS.md).
+## Deploy
+
+`render.yaml` defines a free Render web service. Set the secrets in the dashboard, including `OWNER_TOKEN`. The console
+asks for that token on the first owner action.
+
+Results are in [RESULTS.md](RESULTS.md). Released under the [MIT License](LICENSE).

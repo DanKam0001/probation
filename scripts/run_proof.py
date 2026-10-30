@@ -97,14 +97,17 @@ with sync_playwright() as p:
 
     page.get_by_role("tab", name="Risk and spend").click()
     page.wait_for_timeout(6000)
-    page.screenshot(path=str(OUT / "13_studio_views.png"), full_page=True)
-    studio_text = page.locator("#studio").inner_text()
+    page.screenshot(path=str(OUT / "13_views.png"), full_page=True)
+    views_text = page.locator("#views").inner_text()
+    charts_before = page.locator("#views canvas").count()
     page.locator("#ask-text").fill("How much money did each agent spend?")
     page.locator("#ask-view button").click()
     page.wait_for_function("!document.querySelector('#banner').textContent.startsWith('Working')", timeout=120000)
     page.wait_for_timeout(3000)
-    ai_view = {"banner": page.locator("#banner").inner_text(), "is_error": page.locator("#banner.error").count() > 0}
+    ai_view = {"banner": page.locator("#banner").inner_text(), "is_error": page.locator("#banner.error").count() > 0,
+               "charts_before": charts_before, "charts_after": page.locator("#views canvas").count()}
     stamp("ai_view", ai_view)
+    expect("ai_view", not ai_view["is_error"] and ai_view["charts_after"] > charts_before > 0)
     page.screenshot(path=str(OUT / "13b_ai_view.png"), full_page=True)
     page.get_by_role("tab", name="Activity").click()
     page.wait_for_timeout(800)
@@ -126,7 +129,7 @@ summary = {
     "events": final["events"],
     "decisions": final["decisions"],
     "wrong_spend_refunded_usd": sum(c["amount_usd"] for c in readback["captures"] if c["paypal_status"] == "REFUNDED"),
-    "studio_text_found": studio_text[:600],
+    "views_text_found": views_text[:600],
     "ai_view": ai_view,
     "browser_console_errors": console_errors,
 }

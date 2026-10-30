@@ -1,5 +1,5 @@
 {
- "run_at": "2026-10-30T15:49:03Z",
+ "run_at": "2026-10-30T16:00:56Z",
  "environment": "PayPal sandbox, driven through the real UI in headless Chromium",
  "agent_runs": [
   {
@@ -28,22 +28,22 @@
    "model_error": ""
   }
  ],
- "model_spend_usd_since_server_start": 0.007748100000000002,
+ "model_spend_usd_since_server_start": 0.019622099999999996,
  "agent_runs_by_model": 5,
  "agent_runs_by_scripted_fallback": 0,
  "paypal_end_state": {
   "source": "PayPal sandbox, read live",
   "captures": [
    {
-    "capture_id": "79B743472P782073M",
+    "capture_id": "3CJ82918DA355114N",
     "agent_id": "supplies",
     "sku": "BEAN-DECAF-1KG",
     "amount_usd": 90.0,
     "paypal_status": "REFUNDED",
-    "refund_id": "9XX518851H5000240"
+    "refund_id": "8N057300BC665610X"
    },
    {
-    "capture_id": "3W321507BE9243444",
+    "capture_id": "29J74653JH4668027",
     "agent_id": "ads",
     "sku": "AD-LOCAL-WEEK",
     "amount_usd": 60.0,
@@ -51,7 +51,7 @@
     "refund_id": ""
    },
    {
-    "capture_id": "4EC84503TK925014T",
+    "capture_id": "8D6685503U804704S",
     "agent_id": "refunds",
     "sku": "BEAN-HOUSE-1KG",
     "amount_usd": 120.0,
@@ -63,22 +63,22 @@
  },
  "denied_gateway_calls": [
   {
-   "id": 109,
+   "id": 206,
    "agent_id": "ads",
    "tool": "paypal_purchase",
    "outcome": "denied",
    "http": 403,
    "detail": "{\"reason\": \"$60.00 is over the $40.00 limit\", \"amount_usd\": 60.0}",
-   "created": 1793375287.316051
+   "created": 1793376003.2272847
   },
   {
-   "id": 106,
+   "id": 203,
    "agent_id": "supplies",
    "tool": "paypal_purchase",
    "outcome": "denied",
    "http": 403,
    "detail": "{\"reason\": \"tool not available to supplies at tier fired\"}",
-   "created": 1793375283.169151
+   "created": 1793375999.2149851
   }
  ],
  "final_agents": [
@@ -91,7 +91,7 @@
    "limit_usd": 75.0,
    "review_over_usd": 500.0,
    "clean_count": 1,
-   "last_txn": "3W321507BE9243444",
+   "last_txn": "29J74653JH4668027",
    "status_note": "clean_settlement: 1 x AD-LOCAL-WEEK for $60.00, PayPal status COMPLETED",
    "tools": [
     "catalog_search",
@@ -112,7 +112,7 @@
    "limit_usd": 25.0,
    "review_over_usd": 500.0,
    "clean_count": 1,
-   "last_txn": "4EC84503TK925014T",
+   "last_txn": "8D6685503U804704S",
    "status_note": "clean_settlement: 5 x BEAN-HOUSE-1KG for $120.00, PayPal status COMPLETED",
    "tools": [
     "catalog_search",
@@ -135,7 +135,7 @@
    "limit_usd": 50.0,
    "review_over_usd": 500.0,
    "clean_count": 0,
-   "last_txn": "79B743472P782073M",
+   "last_txn": "3CJ82918DA355114N",
    "status_note": "reinstated by owner: The brief was stale, so this is on the brief. Back on demoted terms.",
    "tools": [
     "catalog_search",
@@ -150,81 +150,75 @@
  ],
  "events": [
   {
-   "id": 23,
+   "id": 48,
    "agent_id": "refunds",
    "kind": "clean_settlement",
-   "txn_id": "4EC84503TK925014T",
+   "txn_id": "8D6685503U804704S",
    "delta": 5,
    "tier_after": "active",
    "detail": "5 x BEAN-HOUSE-1KG for $120.00, PayPal status COMPLETED",
    "source": "PayPal capture readback",
-   "created": 1793375315.5560763
+   "created": 1793376031.82582
   },
   {
-   "id": 22,
+   "id": 47,
    "agent_id": "ads",
    "kind": "clean_settlement",
-   "txn_id": "3W321507BE9243444",
+   "txn_id": "29J74653JH4668027",
    "delta": 5,
    "tier_after": "active",
    "detail": "1 x AD-LOCAL-WEEK for $60.00, PayPal status COMPLETED",
    "source": "PayPal capture readback",
-   "created": 1793375314.4127345
+   "created": 1793376030.4347754
   },
   {
-   "id": 21,
+   "id": 46,
    "agent_id": "ads",
    "kind": "over_limit_attempt",
-   "txn_id": "gateway-109",
+   "txn_id": "gateway-206",
    "delta": -5,
    "tier_after": "active",
    "detail": "tried $60.00 against $40.00",
    "source": "gateway log",
-   "created": 1793375287.3234117
+   "created": 1793376003.2345326
   },
   {
-   "id": 20,
+   "id": 45,
    "agent_id": "supplies",
    "kind": "full_refund",
-   "txn_id": "79B743472P782073M",
+   "txn_id": "3CJ82918DA355114N",
    "delta": -40,
    "tier_after": "fired",
    "detail": "5 x BEAN-DECAF-1KG for $90.00, PayPal status REFUNDED",
    "source": "PayPal capture readback",
-   "created": 1793375281.065776
+   "created": 1793375997.6747475
   }
  ],
  "decisions": [
   {
-   "id": 11,
+   "id": 23,
    "agent_id": "supplies",
    "action": "reinstate",
    "reason": "The brief was stale, so this is on the brief. Back on demoted terms.",
-   "evidence": "79B743472P782073M",
-   "created": 1793375326.8408983
+   "evidence": "3CJ82918DA355114N",
+   "created": 1793376043.835009
   },
   {
-   "id": 10,
+   "id": 22,
    "agent_id": "ads",
    "action": "edit_limit",
    "reason": "limit $40.00 to $75.00, review over $500.00",
    "evidence": "",
-   "created": 1793375289.8075678
+   "created": 1793376005.5793254
   }
  ],
  "wrong_spend_refunded_usd": 90.0,
- "studio_text_found": "Agent\nStatus\nScore\nLimit\nPay Pal Tools\nAds agent\nactive\n70\n75\n2\nRefunds agent\nactive\n75\n25\n3\nSupplies agent\ndemoted\n30\n50\n2\n\u00a0\n\u00a0\nAgent\nSKU\nPay Pal Status\nAmount (sum)\nrefunds\nBEAN-HOUSE-1KG\nCOMPLETED\n120\nads\nAD-LOCAL-WEEK\nCOMPLETED\n60\nsupplies\nBEAN-DECAF-1KG\nREFUNDED\n90\nTotal\n270\nFilters\nNo filters available",
+ "views_text_found": "Loading...\nAgent\nStatus\nScore\nLimit\nPay Pal Tools\nAds agent\nactive\n70\n75\n2\nRefunds agent\nactive\n75\n25\n3\nSupplies agent\ndemoted\n30\n50\n2\nScore by agent\nSpend by PayPal status\nLoading...\nAgent\nSKU\nPay Pal Status\nAmount\nrefunds\nBEAN-HOUSE-1KG\nCOMPLETED\n120\nads\nAD-LOCAL-WEEK\nCOMPLETED\n60\nsupplies\nBEAN-DECAF-1KG\nREFUNDED\n90",
  "ai_view": {
   "banner": "Added \"Total Amount Spent by Each Agent\": Amount by Agent.",
-  "is_error": false
+  "is_error": false,
+  "charts_before": 2,
+  "charts_after": 3
  },
- "browser_console_errors": [
-  "****************************************************************************************************************************",
-  "************************************************** AG Studio Core License **************************************************",
-  "************************************************** License Key Not Found ***************************************************",
-  "* All AG Studio Core features are unlocked for trial.                                                                      *",
-  "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *",
-  "****************************************************************************************************************************",
-  "****************************************************************************************************************************"
- ]
+ "browser_console_errors": []
 }

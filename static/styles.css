@@ -33,7 +33,9 @@ nav button[aria-selected=true] { color:var(--ink); border-bottom-color:var(--acc
 #evidence code { font:12px ui-monospace,Consolas,monospace; overflow-wrap:anywhere; }
 #evidence .src { color:var(--muted); font-size:13px; }
 #banner { padding:9px 24px; background:#e6f1ec; } #banner.error { background:#fbe9e7; color:var(--bad); }
-#studio { height:1120px; }
+#views { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:12px; }
+.view { height:300px; min-width:0; background:var(--card); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+#risk-grid,#spend-grid { grid-column:1/-1; height:220px; }
 #ask-view { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px; }
 #ask-view input { flex:1; min-width:200px; font:inherit; padding:7px 10px; border:1px solid var(--line); border-radius:6px; }
 #ask-view button { margin:0; }

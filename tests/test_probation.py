@@ -160,6 +160,18 @@ def test_ai_view_failure_is_an_error_not_a_chart(env, monkeypatch):
     assert env[0].post("/api/views/ask", json={"question": "spend by agent"}).status_code == 503
 
 
+def test_owner_token_guards_owner_actions(env, monkeypatch):
+    c, *_ = env
+    monkeypatch.setenv("OWNER_TOKEN", "secret")
+    assert c.post("/api/reset").status_code == 401
+    assert c.post("/api/reset", headers={"X-Owner-Token": "secret"}).status_code == 200
+
+
+def test_no_commercial_grid_packages_in_the_page():
+    page = Path("static/index.html").read_text() + Path("static/app.js").read_text()
+    assert "enterprise" not in page.lower() and "ag-" + "studio" not in page.lower()
+
+
 def test_unknown_token_is_refused(env):
     assert env[0].get("/gateway/tools", headers={"Authorization": "Bearer nope"}).status_code == 401
 

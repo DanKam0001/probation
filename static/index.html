@@ -6,7 +6,7 @@
 <title>Probation</title>
 <link rel="stylesheet" href="styles.css">
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@36.2.0/dist/ag-grid-community.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ag-studio@3.0.0/dist/umd/ag-studio.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ag-charts-community@14.2.0/dist/umd/ag-charts-community.js"></script>
 </head>
 <body>
 <header>
@@ -34,14 +34,19 @@
       <div id="evidence"></div>
     </section>
     <section id="tab-views" hidden>
-      <h2>Risk and spend, in AG Studio</h2>
+      <h2>Risk and spend</h2>
       <div id="views-empty" class="empty">No purchases yet. Run the supplies agent to fill these views.</div>
       <form id="ask-view">
         <label for="ask-text">Ask for a new view</label>
         <input id="ask-text" maxlength="300" placeholder="How much did each agent spend?">
         <button type="submit">Add view</button>
       </form>
-      <div id="studio"></div>
+      <div id="views">
+        <div id="risk-grid" class="view"></div>
+        <div id="risk-chart" class="view"></div>
+        <div id="spend-chart" class="view"></div>
+        <div id="spend-grid" class="view"></div>
+      </div>
     </section>
     <section id="tab-activity" hidden>
       <h2>Gateway log</h2>
