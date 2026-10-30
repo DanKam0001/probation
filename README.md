@@ -15,6 +15,8 @@ hand over the work, and reinstate the agent, and each of those decisions is logg
 - **Ladder.** Clean settlements promote, partial refunds and open disputes demote, and full refunds and lost disputes
   fire. Over-limit attempts cost score.
 - **Owner console.** An editable AG Grid roster, a guided flow, an evidence trail, and AG Studio risk and spend views.
+  The owner can ask for a new view in plain English: the model picks from known fields, and the server rejects
+  anything else before it reaches AG Studio.
 
 ## Run it
 
@@ -29,8 +31,8 @@ require a token on owner actions. Open http://127.0.0.1:8000 and follow the Owne
 
 ## Current limits
 
-- Agent decisions in the recorded run came from a fixed fallback plan, not a model, because the model endpoint was
-  unavailable. Every run is labelled, in the UI and in `proof_results/`, with which one made its choices.
+- Agents run on Nemotron through Nebius Token Factory. If the model is unreachable, a run falls back to a fixed plan,
+  and the UI and `proof_results/` label it as such. The recorded runs did not use the fallback.
 - The gateway calls PayPal's REST APIs directly. It does not use the PayPal Agent Toolkit or MCP server.
 - In the sandbox, the app's merchant account plays the supplier and PayPal's test card plays the business's payment
   method.

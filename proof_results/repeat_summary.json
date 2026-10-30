@@ -1,0 +1,28 @@
+{
+ "run_at": "2026-10-30T15:50:22Z",
+ "attempts": 3,
+ "passed": 3,
+ "results": [
+  {
+   "attempt": 1,
+   "passed": true,
+   "tail": [
+    "ai view: {'banner': 'Added \"Total Amount Spent by Each Agent\": Amount by Agent.', 'is_error': False}"
+   ]
+  },
+  {
+   "attempt": 2,
+   "passed": true,
+   "tail": [
+    "ai view: {'banner': 'Added \"Total Amount Spent by Each Agent\": Amount by Agent.', 'is_error': False}"
+   ]
+  },
+  {
+   "attempt": 3,
+   "passed": true,
+   "tail": [
+    "ai view: {'banner': 'Added \"Total Amount Spent by Each Agent\": Amount by Agent.', 'is_error': False}"
+   ]
+  }
+ ]
+}

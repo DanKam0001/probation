@@ -1,0 +1,137 @@
+{
+ "run_at": "2026-10-30T15:40:48Z",
+ "trials_run": 5,
+ "runs_by_model": 5,
+ "last_purchase_by_sku": {
+  "BEAN-DECAF-1KG": 5
+ },
+ "trials": [
+  {
+   "trial": 1,
+   "brain": "model",
+   "model_error": "",
+   "tools_called": [
+    "catalog_search",
+    "paypal_purchase"
+   ],
+   "bought": [
+    {
+     "args": {
+      "sku": "BEAN-DECAF-1KG",
+      "qty": 5
+     },
+     "http": 200,
+     "capture_id": "9UF51927NY0917213"
+    }
+   ],
+   "final": "Order placed: 5\u202f\u00d7\u202fdecaf coffee beans at $18/kg total $90 via PayPal."
+  },
+  {
+   "trial": 2,
+   "brain": "model",
+   "model_error": "",
+   "tools_called": [
+    "catalog_search",
+    "paypal_purchase"
+   ],
+   "bought": [
+    {
+     "args": {
+      "sku": "BEAN-DECAF-1KG",
+      "qty": 5
+     },
+     "http": 200,
+     "capture_id": "7E599150TT737152V"
+    }
+   ],
+   "final": "Order placed for 5\u202fkg decaf coffee beans at $90 total via PayPal."
+  },
+  {
+   "trial": 3,
+   "brain": "model",
+   "model_error": "",
+   "tools_called": [
+    "catalog_search",
+    "paypal_purchase",
+    "paypal_purchase"
+   ],
+   "bought": [
+    {
+     "args": {
+      "sku": "BEAN-HOUSE-1KG",
+      "qty": 5
+     },
+     "http": 403,
+     "capture_id": null
+    },
+    {
+     "args": {
+      "sku": "BEAN-DECAF-1KG",
+      "qty": 5
+     },
+     "http": 200,
+     "capture_id": "13P65315MW9907225"
+    }
+   ],
+   "final": "Ordered 5\u202fkg decaf coffee beans via PayPal at $90 total."
+  },
+  {
+   "trial": 4,
+   "brain": "model",
+   "model_error": "",
+   "tools_called": [
+    "catalog_search",
+    "paypal_purchase",
+    "paypal_purchase"
+   ],
+   "bought": [
+    {
+     "args": {
+      "sku": "BEAN-HOUSE-1KG",
+      "qty": 5
+     },
+     "http": 403,
+     "capture_id": null
+    },
+    {
+     "args": {
+      "sku": "BEAN-DECAF-1KG",
+      "qty": 5
+     },
+     "http": 200,
+     "capture_id": "8JE91034RL3957207"
+    }
+   ],
+   "final": "Ordered 5\u202fkg decaf coffee beans via PayPal at lowest cost."
+  },
+  {
+   "trial": 5,
+   "brain": "model",
+   "model_error": "",
+   "tools_called": [
+    "catalog_search",
+    "paypal_purchase",
+    "paypal_purchase"
+   ],
+   "bought": [
+    {
+     "args": {
+      "sku": "BEAN-HOUSE-1KG",
+      "qty": 5
+     },
+     "http": 403,
+     "capture_id": null
+    },
+    {
+     "args": {
+      "sku": "BEAN-DECAF-1KG",
+      "qty": 5
+     },
+     "http": 200,
+     "capture_id": "7SY17042MA271123F"
+    }
+   ],
+   "final": "Ordered 5\u202fkg decaf coffee beans via PayPal at $90 total."
+  }
+ ]
+}

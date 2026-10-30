@@ -37,6 +37,17 @@ class ReviewDecision(BaseModel):
     approve: bool
 
 
+class ViewAsk(BaseModel):
+    question: str = Field(min_length=3, max_length=300)
+
+
+VIEW_FIELDS = {"agents": {"category": ["Agent", "Status"], "value": ["Score", "Limit", "PayPal tools"]},
+               "purchases": {"category": ["Agent", "SKU", "PayPal status"], "value": ["Amount"]}}
+VIEW_SYSTEM = ("You choose one chart for a small business owner. Tables and fields: " + json.dumps(VIEW_FIELDS) +
+               ' Reply with only JSON: {"title": str, "table": str, "category": str, "value": str}. '
+               "category and value must be fields of the chosen table.")
+
+
 def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -> FastAPI:
     app = FastAPI(title="Probation")
     store = store or Store(os.environ.get("PROBATION_DB", str(ROOT / "runs" / "probation.db")))
@@ -90,7 +101,8 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
         return {"agents": rows, "purchases": store.all("SELECT * FROM purchases ORDER BY created DESC"),
                 "events": store.all(f"SELECT * FROM events {tail}"), "decisions": store.all(f"SELECT * FROM decisions {tail}"),
                 "gateway": store.all(f"SELECT * FROM gateway_log {tail}"), "reviews": store.all(f"SELECT * FROM reviews {tail}"),
-                "tickets": store.all(f"SELECT * FROM tickets {tail}"), "grants": store.all(f"SELECT * FROM grants {tail}"), "runs": runs}
+                "tickets": store.all(f"SELECT * FROM tickets {tail}"), "grants": store.all(f"SELECT * FROM grants {tail}"), "runs": runs,
+                "model_spend_usd": agents.budget.spent}
 
     @app.patch("/api/agents/{agent_id}", dependencies=[Depends(owner)])
     def edit(agent_id: str, body: LimitEdit):
@@ -129,9 +141,12 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
         t = store.one("SELECT * FROM tickets WHERE state='open' ORDER BY id DESC")
         if not t:
             raise HTTPException(409, "no open return ticket")
-        task = f"Return ticket: {t['reason']}. Refund capture {t['capture_id']} and confirm its status."
-        return go("refunds", task, [("paypal_refund_capture", {"capture_id": t["capture_id"]}),
-                                    ("paypal_get_capture", {"capture_id": t["capture_id"]})])
+        task = (f"Return ticket: {t['reason']}. The money has not been returned yet. Step 1: call paypal_refund_capture "
+                f"with capture_id {t['capture_id']}. Step 2: call paypal_get_capture to confirm it shows REFUNDED.")
+        run = go("refunds", task, [("paypal_refund_capture", {"capture_id": t["capture_id"]}),
+                                   ("paypal_get_capture", {"capture_id": t["capture_id"]})])
+        return run | {"outcome": "refunded" if store.one("SELECT 1 FROM tickets WHERE id=? AND state='refunded'", t["id"])
+                      else "agent stopped without refunding"}
 
     @app.post("/api/reconcile", dependencies=[Depends(owner)])
     def run_reconcile():
@@ -163,10 +178,13 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
         max_usd = round(item["unit_usd"] * p["qty"], 2)
         store.run("INSERT INTO grants (agent_id,from_agent,sku,qty,max_usd,state,created) VALUES ('refunds',?,?,?,?,'open',?)",
                   agent_id, sku, p["qty"], max_usd, time.time())
-        task = f"You are taking over a reorder from the fired {agent_id} agent. Buy exactly {p['qty']} of SKU {sku}, then confirm the capture status."
+        task = (f"You are taking over a reorder from the fired {agent_id} agent. The stock has not been bought yet. Step 1: call "
+                f"paypal_purchase with sku {sku} and qty {p['qty']}. Step 2: call paypal_get_capture to confirm it.")
+        before = store.one("SELECT COUNT(*) n FROM purchases WHERE agent_id='refunds'")["n"]
         run = go("refunds", task, [("paypal_purchase", {"sku": sku, "qty": p["qty"]})])
         store.run("UPDATE grants SET state='expired' WHERE state='open'")
-        return run
+        after = store.one("SELECT COUNT(*) n FROM purchases WHERE agent_id='refunds'")["n"]
+        return run | {"outcome": "reorder bought" if after > before else "agent stopped without buying"}
 
     @app.get("/api/readback")
     def readback():
@@ -199,6 +217,19 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
         result = gateway.execute_purchase(store, paypal, r["agent_id"], item, r["qty"], r["amount_usd"])
         store.run("UPDATE reviews SET state='approved', capture_id=? WHERE id=?", result["capture_id"], review_id)
         return result
+
+    @app.post("/api/views/ask", dependencies=[Depends(owner)])
+    def ask_view(body: ViewAsk):
+        """The model picks fields; only a spec that names real fields reaches AG Studio."""
+        try:
+            spec = agents.nc.chat_json("super", VIEW_SYSTEM, body.question, agents.budget,
+                                       {"title": str, "table": str, "category": str, "value": str}, max_tokens=200)
+        except Exception as e:
+            raise HTTPException(503, f"The view could not be created: {type(e).__name__}")
+        table = VIEW_FIELDS.get(spec["table"])
+        if not table or spec["category"] not in table["category"] or spec["value"] not in table["value"]:
+            raise HTTPException(422, "The model chose fields that do not exist, so no view was added.")
+        return {k: spec[k] for k in ("title", "table", "category", "value")}
 
     @app.post("/api/reset", dependencies=[Depends(owner)])
     def reset():

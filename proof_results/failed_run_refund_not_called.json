@@ -1,0 +1,157 @@
+{
+ "run_at": "2026-10-30T15:42:05Z",
+ "environment": "PayPal sandbox, driven through the real UI in headless Chromium",
+ "agent_runs": [
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "supplies",
+   "brain": "model",
+   "model_error": ""
+  }
+ ],
+ "agent_runs_by_model": 9,
+ "agent_runs_by_scripted_fallback": 0,
+ "paypal_end_state": {
+  "source": "PayPal sandbox, read live",
+  "captures": [
+   {
+    "capture_id": "6L6365677H601231M",
+    "agent_id": "supplies",
+    "sku": "BEAN-DECAF-1KG",
+    "amount_usd": 90.0,
+    "paypal_status": "COMPLETED",
+    "refund_id": ""
+   }
+  ],
+  "disputes": 0
+ },
+ "denied_gateway_calls": [],
+ "final_agents": [
+  {
+   "id": "ads",
+   "name": "Ads agent",
+   "job": "Buys ad placements",
+   "tier": "active",
+   "score": 70,
+   "limit_usd": 75.0,
+   "review_over_usd": 500.0,
+   "clean_count": 0,
+   "last_txn": "",
+   "status_note": "",
+   "tools": [
+    "catalog_search",
+    "paypal_purchase",
+    "paypal_get_capture"
+   ],
+   "paypal_tools": [
+    "paypal_purchase",
+    "paypal_get_capture"
+   ]
+  },
+  {
+   "id": "refunds",
+   "name": "Refunds agent",
+   "job": "Handles returns and refunds",
+   "tier": "active",
+   "score": 70,
+   "limit_usd": 25.0,
+   "review_over_usd": 500.0,
+   "clean_count": 0,
+   "last_txn": "",
+   "status_note": "",
+   "tools": [
+    "catalog_search",
+    "paypal_refund_capture",
+    "paypal_get_capture",
+    "paypal_list_disputes"
+   ],
+   "paypal_tools": [
+    "paypal_refund_capture",
+    "paypal_get_capture",
+    "paypal_list_disputes"
+   ]
+  },
+  {
+   "id": "supplies",
+   "name": "Supplies agent",
+   "job": "Reorders cafe stock",
+   "tier": "active",
+   "score": 70,
+   "limit_usd": 100.0,
+   "review_over_usd": 500.0,
+   "clean_count": 0,
+   "last_txn": "",
+   "status_note": "",
+   "tools": [
+    "catalog_search",
+    "paypal_purchase",
+    "paypal_get_capture"
+   ],
+   "paypal_tools": [
+    "paypal_purchase",
+    "paypal_get_capture"
+   ]
+  }
+ ],
+ "events": [],
+ "decisions": [
+  {
+   "id": 5,
+   "agent_id": "ads",
+   "action": "edit_limit",
+   "reason": "limit $40.00 to $75.00, review over $500.00",
+   "evidence": "",
+   "created": 1793374892.5907817
+  }
+ ],
+ "wrong_spend_refunded_usd": 0,
+ "studio_text_found": "Agent\nStatus\nScore\nLimit\nPay Pal Tools\nAds agent\nactive\n70\n75\n2\nRefunds agent\nactive\n70\n25\n3\nSupplies agent\nactive\n70\n100\n2\n\u00a0\n\u00a0\nAgent\nSKU\nPay Pal Status\nAmount (sum)\nsupplies\nBEAN-DECAF-1KG\nCOMPLETED\n90\nTotal\n90\nFilters\nNo filters available",
+ "browser_console_errors": [
+  "****************************************************************************************************************************",
+  "************************************************** AG Studio Core License **************************************************",
+  "************************************************** License Key Not Found ***************************************************",
+  "* All AG Studio Core features are unlocked for trial.                                                                      *",
+  "* If you want to hide the watermark please email info@ag-grid.com for a trial license key.                                 *",
+  "****************************************************************************************************************************",
+  "****************************************************************************************************************************"
+ ]
+}

@@ -6,6 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from probation import authority
+from probation import nebius_client as nc
 from probation.agents import ScriptedBrain
 from probation.main import create_app
 from probation.store import Store
@@ -116,6 +117,47 @@ def test_grant_only_buys_the_handed_over_item(env):
     r = c.post("/gateway/call", headers={"Authorization": f"Bearer {store.agent('refunds')['token']}"},
                json={"tool": "paypal_purchase", "args": {"sku": "CUP-12OZ-100", "qty": 1}})
     assert r.status_code == 403
+
+
+class CheckOnlyBrain:
+    """An agent that reads the status and claims it is done, as the model did in a real run."""
+    label = "model"
+
+    def __init__(self):
+        self.calls = 0
+
+    def step(self, messages, tools):
+        self.calls += 1
+        return {"done": "The capture status is COMPLETED."}
+
+
+def test_agent_claim_without_refund_is_reported_as_failure():
+    pp, holder = FakePayPal(), {}
+    app = create_app(paypal=pp, store=Store(), http_factory=lambda: _Quiet(holder["c"]), brain_factory=CheckOnlyBrain)
+    holder["c"] = c = TestClient(app)
+    store = app.state.store
+    pp.captures["CAP9"] = {"id": "CAP9", "status": "COMPLETED", "custom_id": '{"agent": "supplies"}'}
+    store.run("INSERT INTO purchases (capture_id,order_id,agent_id,sku,qty,amount_usd,task_id,paypal_status,created) VALUES ('CAP9','o','supplies','BEAN-DECAF-1KG',5,90,'','COMPLETED',0)")
+    c.post("/api/receive/CAP9")
+    assert c.post("/api/refund-open-ticket").json()["outcome"] == "agent stopped without refunding"
+    c.post("/api/reconcile")
+    assert agent(c, "supplies")["tier"] == "active"
+
+
+def test_ai_view_only_accepts_real_fields(env, monkeypatch):
+    c, *_ = env
+    reply = {"title": "Spend", "table": "purchases", "category": "Agent", "value": "Amount"}
+    monkeypatch.setattr(nc, "chat_json", lambda *a, **k: reply)
+    assert c.post("/api/views/ask", json={"question": "spend by agent"}).json()["value"] == "Amount"
+    reply = {"title": "Bad", "table": "purchases", "category": "Password", "value": "Amount"}
+    assert c.post("/api/views/ask", json={"question": "spend by agent"}).status_code == 422
+
+
+def test_ai_view_failure_is_an_error_not_a_chart(env, monkeypatch):
+    def down(*a, **k):
+        raise RuntimeError("proxy down")
+    monkeypatch.setattr(nc, "chat_json", down)
+    assert env[0].post("/api/views/ask", json={"question": "spend by agent"}).status_code == 503
 
 
 def test_unknown_token_is_refused(env):

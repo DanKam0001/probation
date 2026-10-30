@@ -49,7 +49,8 @@ const STEPS = [
 ];
 
 function brainNote(run) {
-  return run.brain === "model" ? "Model chose each tool call." : `Scripted fallback ran: model unavailable (${run.model_error})`;
+  const said = run.outcome ? `Outcome: ${run.outcome}.` : run.final;
+  return run.brain === "model" ? `Model run. ${said}` : `Scripted fallback ran: model unavailable (${run.model_error}). ${said}`;
 }
 
 function current() {
@@ -58,7 +59,7 @@ function current() {
   if (!state.tickets.length) return 1;
   if (state.tickets.some((t) => t.state === "open")) return 2;
   if (s.tier !== "fired" && !state.decisions.some((d) => d.action === "reinstate")) return 3;
-  if (!denied("supplies")) return 4;
+  if (!state.gateway.some((g) => g.agent_id === "supplies" && g.detail.includes("tier fired"))) return 4;
   if (!denied("ads") && !buy("ads")) return 5;
   if (!buy("ads")) return a.limit_usd >= 60 ? 7 : 6;
   if (!buy("refunds")) return 8;
@@ -195,6 +196,22 @@ document.querySelectorAll("nav button").forEach((b) => (b.onclick = () => {
   ["team", "views", "activity"].forEach((t) => ($(`tab-${t}`).hidden = t !== b.dataset.tab));
   renderStudio();
 }));
+$("ask-view").onsubmit = async (e) => {
+  e.preventDefault();
+  const question = $("ask-text").value.trim();
+  if (!question || !studio) return;
+  banner("Working...");
+  try {
+    const v = await api("/api/views/ask", { method: "POST", body: JSON.stringify({ question }) });
+    const now = studio.getState(), page = now.pages[0], id = `ai${Date.now()}`;
+    const count = Object.keys(page.widgets).filter((k) => k.startsWith("ai")).length;
+    studio.setState({ ...now, pages: [{ ...page,
+      widgets: { ...page.widgets, [id]: { type: "column-chart-grouped", dataMapping: {
+        categoryKey: [{ id: `${v.table}.${v.category}` }], valueKey: [{ id: `${v.table}.${v.value}`, aggregation: "sum" }] } } },
+      widgetLayout: { ...page.widgetLayout, [id]: { xTrack: count % 2 ? 12 : 0, yTrack: 26 + 14 * Math.floor(count / 2), xSpan: 12, ySpan: 14 } } }] });
+    banner(`Added "${v.title}": ${v.value} by ${v.category}.`);
+  } catch (err) { banner(err.message, true); }
+};
 $("reset").onclick = async () => {
   if (!confirm("Clear this run and start over? PayPal keeps its records.")) return;
   await api("/api/reset", { method: "POST" }); readback = null; banner(""); refresh();
