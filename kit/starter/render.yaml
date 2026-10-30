@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: CHANGE-ME
+    runtime: python
+    plan: starter
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: NEBIUS_API_KEY
+        sync: false            # set by the deploy stage or the dashboard, never committed
+      - key: SERVER_CAP_USD
+        value: "5"             # total live spend this server instance may make
+      - key: PYTHON_VERSION
+        value: "3.11.9"

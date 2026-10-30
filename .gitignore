@@ -1,0 +1,13 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+runs/
+.pytest_cache/
+TASK.md
+BUILD_NOTES.md
+BLOCKED.md
+STOP
+SUBMIT/
+video/work/

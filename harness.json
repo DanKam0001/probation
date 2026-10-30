@@ -1,0 +1,1 @@
+{"test": ".venv\\Scripts\\python.exe -m pytest -q tests kit/starter/test_nebius_client.py", "start": ".venv\\Scripts\\python.exe -m uvicorn probation.main:app --port {port}", "health": "/api/health", "proof": "proof_results"}
