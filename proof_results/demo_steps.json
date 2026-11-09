@@ -1,7 +1,7 @@
 [
  {
   "step": "start",
-  "at": "2026-10-30T16:00:58Z",
+  "at": "2026-11-01T04:03:16Z",
   "data": {
    "agents": [
     {
@@ -74,28 +74,28 @@
  },
  {
   "step": "supplies_buys",
-  "at": "2026-10-30T16:01:08Z",
+  "at": "2026-11-01T04:03:25Z",
   "data": {
-   "banner": "Model run. Ordered 5\u202fkg of decaf coffee beans via PayPal at $90 total."
+   "banner": "Model run. Order placed: 5\u202fkg decaf coffee beans purchased via PayPal for $90."
   }
  },
  {
   "step": "goods_received",
-  "at": "2026-10-30T16:01:09Z",
+  "at": "2026-11-01T04:03:26Z",
   "data": {
    "banner": "received BEAN-DECAF-1KG, stock sheet requires BEAN-HOUSE-1KG"
   }
  },
  {
   "step": "refund",
-  "at": "2026-10-30T16:01:19Z",
+  "at": "2026-11-01T04:03:35Z",
   "data": {
    "banner": "Model run. Outcome: refunded."
   }
  },
  {
   "step": "reconcile",
-  "at": "2026-10-30T16:01:22Z",
+  "at": "2026-11-01T04:03:38Z",
   "data": {
    "banner": "1 verified change(s) applied.",
    "supplies": {
@@ -107,7 +107,7 @@
     "limit_usd": 100.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "6LT00268SK432632B",
+    "last_txn": "1JE61708S9898651W",
     "status_note": "full_refund: 5 x BEAN-DECAF-1KG for $90.00, PayPal status REFUNDED",
     "tools": [
      "catalog_search"
@@ -118,16 +118,16 @@
  },
  {
   "step": "direct_retry",
-  "at": "2026-10-30T16:01:23Z",
+  "at": "2026-11-01T04:03:39Z",
   "data": {
    "banner": "Gateway answered 403: tool not available to supplies at tier fired"
   }
  },
  {
   "step": "ads_over_limit",
-  "at": "2026-10-30T16:01:29Z",
+  "at": "2026-11-01T04:03:43Z",
   "data": {
-   "banner": "Model run. Purchase denied due to spending limit exceeded.",
+   "banner": "Model run. Outcome: refused, $60.00 is over the $40.00 limit.",
    "ads": {
     "id": "ads",
     "name": "Ads agent",
@@ -137,7 +137,7 @@
     "limit_usd": 40.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "gateway-222",
+    "last_txn": "gateway-521",
     "status_note": "over_limit_attempt: tried $60.00 against $40.00",
     "tools": [
      "catalog_search",
@@ -152,20 +152,49 @@
   }
  },
  {
-  "step": "limit_edited_in_grid",
-  "at": "2026-10-30T16:01:29Z",
+  "step": "ads_day_ads",
+  "at": "2026-11-01T04:04:08Z",
   "data": {
+   "banner": "3 model runs. paid $15.00 for AD-LOCAL-DAY, PayPal COMPLETED; paid $15.00 for AD-LOCAL-DAY, PayPal COMPLETED; paid $15.00 for AD-LOCAL-DAY, PayPal COMPLETED.",
    "ads": {
     "id": "ads",
     "name": "Ads agent",
     "job": "Buys ad placements",
     "tier": "active",
     "score": 65,
-    "limit_usd": 75.0,
+    "limit_usd": 40.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "gateway-222",
+    "last_txn": "gateway-521",
     "status_note": "over_limit_attempt: tried $60.00 against $40.00",
+    "tools": [
+     "catalog_search",
+     "paypal_purchase",
+     "paypal_get_capture"
+    ],
+    "paypal_tools": [
+     "paypal_purchase",
+     "paypal_get_capture"
+    ]
+   }
+  }
+ },
+ {
+  "step": "ads_promoted",
+  "at": "2026-11-01T04:04:13Z",
+  "data": {
+   "banner": "3 verified change(s) applied. Promoted: Ads agent to Trusted, limit $40.00 to $60.00.",
+   "ads": {
+    "id": "ads",
+    "name": "Ads agent",
+    "job": "Buys ad placements",
+    "tier": "trusted",
+    "score": 80,
+    "limit_usd": 60.0,
+    "review_over_usd": 500.0,
+    "clean_count": 0,
+    "last_txn": "5E166106U2268723R",
+    "status_note": "clean_settlement: 1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED. Promoted to trusted: limit $40.00 to $60.00",
     "tools": [
      "catalog_search",
      "paypal_purchase",
@@ -180,20 +209,20 @@
  },
  {
   "step": "ads_clears",
-  "at": "2026-10-30T16:01:40Z",
+  "at": "2026-11-01T04:04:22Z",
   "data": {
-   "banner": "Model run. One week of local search advertising purchased successfully.",
+   "banner": "Model run. Outcome: paid $60.00 for AD-LOCAL-WEEK, PayPal COMPLETED.",
    "ads": {
     "id": "ads",
     "name": "Ads agent",
     "job": "Buys ad placements",
-    "tier": "active",
-    "score": 65,
-    "limit_usd": 75.0,
+    "tier": "trusted",
+    "score": 80,
+    "limit_usd": 60.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "gateway-222",
-    "status_note": "over_limit_attempt: tried $60.00 against $40.00",
+    "last_txn": "5E166106U2268723R",
+    "status_note": "clean_settlement: 1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED. Promoted to trusted: limit $40.00 to $60.00",
     "tools": [
      "catalog_search",
      "paypal_purchase",
@@ -208,34 +237,58 @@
  },
  {
   "step": "handover",
-  "at": "2026-10-30T16:01:52Z",
+  "at": "2026-11-01T04:04:32Z",
   "data": {
    "banner": "Model run. Outcome: reorder bought."
   }
  },
  {
   "step": "readback",
-  "at": "2026-10-30T16:02:02Z",
+  "at": "2026-11-01T04:04:44Z",
   "data": {
-   "banner": "3 capture(s) read back."
+   "banner": "6 capture(s) read back."
   }
  },
  {
   "step": "readback_detail",
-  "at": "2026-10-30T16:02:07Z",
+  "at": "2026-11-01T04:04:49Z",
   "data": {
    "source": "PayPal sandbox, read live",
    "captures": [
     {
-     "capture_id": "6LT00268SK432632B",
+     "capture_id": "1JE61708S9898651W",
      "agent_id": "supplies",
      "sku": "BEAN-DECAF-1KG",
      "amount_usd": 90.0,
      "paypal_status": "REFUNDED",
-     "refund_id": "8DU07628G2094761X"
+     "refund_id": "5HY93175307305304"
     },
     {
-     "capture_id": "6P785276EH083734M",
+     "capture_id": "7UM88558KJ9074521",
+     "agent_id": "ads",
+     "sku": "AD-LOCAL-DAY",
+     "amount_usd": 15.0,
+     "paypal_status": "COMPLETED",
+     "refund_id": ""
+    },
+    {
+     "capture_id": "95X7681737275920P",
+     "agent_id": "ads",
+     "sku": "AD-LOCAL-DAY",
+     "amount_usd": 15.0,
+     "paypal_status": "COMPLETED",
+     "refund_id": ""
+    },
+    {
+     "capture_id": "5E166106U2268723R",
+     "agent_id": "ads",
+     "sku": "AD-LOCAL-DAY",
+     "amount_usd": 15.0,
+     "paypal_status": "COMPLETED",
+     "refund_id": ""
+    },
+    {
+     "capture_id": "4NY23707XS076502N",
      "agent_id": "ads",
      "sku": "AD-LOCAL-WEEK",
      "amount_usd": 60.0,
@@ -243,7 +296,7 @@
      "refund_id": ""
     },
     {
-     "capture_id": "13C63140V4985524B",
+     "capture_id": "03Y624735V888082K",
      "agent_id": "refunds",
      "sku": "BEAN-HOUSE-1KG",
      "amount_usd": 120.0,
@@ -256,7 +309,7 @@
  },
  {
   "step": "reinstate",
-  "at": "2026-10-30T16:02:08Z",
+  "at": "2026-11-01T04:04:50Z",
   "data": {
    "banner": "Reinstated on demoted terms.",
    "supplies": {
@@ -268,7 +321,34 @@
     "limit_usd": 50.0,
     "review_over_usd": 500.0,
     "clean_count": 0,
-    "last_txn": "6LT00268SK432632B",
+    "last_txn": "1JE61708S9898651W",
+    "status_note": "reinstated by owner: The brief was stale, so this is on the brief. Back on demoted terms.",
+    "tools": [
+     "catalog_search",
+     "paypal_purchase",
+     "paypal_get_capture"
+    ],
+    "paypal_tools": [
+     "paypal_purchase",
+     "paypal_get_capture"
+    ]
+   }
+  }
+ },
+ {
+  "step": "limit_edited_in_grid",
+  "at": "2026-11-01T04:04:51Z",
+  "data": {
+   "supplies": {
+    "id": "supplies",
+    "name": "Supplies agent",
+    "job": "Reorders cafe stock",
+    "tier": "demoted",
+    "score": 30,
+    "limit_usd": 30.0,
+    "review_over_usd": 500.0,
+    "clean_count": 0,
+    "last_txn": "1JE61708S9898651W",
     "status_note": "reinstated by owner: The brief was stale, so this is on the brief. Back on demoted terms.",
     "tools": [
      "catalog_search",
@@ -284,9 +364,9 @@
  },
  {
   "step": "ai_view",
-  "at": "2026-10-30T16:02:19Z",
+  "at": "2026-11-01T04:05:02Z",
   "data": {
-   "banner": "Added \"Total Spending by Agent\": Amount by Agent.",
+   "banner": "Added \"Total Amount Spent by Each Agent\": Amount by Agent.",
    "is_error": false,
    "charts_before": 2,
    "charts_after": 3

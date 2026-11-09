@@ -205,6 +205,37 @@ def test_promotion_after_clean_settlements(env):
     assert a["tier"] == "trusted" and a["limit_usd"] == 60.0
 
 
+def test_agent_earns_the_limit_and_the_refused_placement_clears(env):
+    c, _, store = env
+    r = c.post("/api/run/ads").json()
+    assert r["outcome"].startswith("refused") and agent(c, "ads")["limit_usd"] == 40.0
+    for _ in range(authority.CLEAN_TO_PROMOTE):
+        assert "PayPal COMPLETED" in c.post("/api/run/ads-day").json()["outcome"]
+    assert agent(c, "ads")["tier"] == "active"      # nothing moves until PayPal is read back
+    back = c.post("/api/reconcile").json()
+    assert back["promotions"] == [{"agent_id": "ads", "name": "Ads agent", "from_tier": "active", "to_tier": "trusted",
+                                   "from_limit": 40.0, "to_limit": 60.0}]
+    assert agent(c, "ads")["tier"] == "trusted" and agent(c, "ads")["limit_usd"] == 60.0
+    assert not [d for d in c.get("/api/state").json()["decisions"] if d["action"] == "edit_limit"]
+    assert c.post("/api/run/ads").json()["outcome"] == "paid $60.00 for AD-LOCAL-WEEK, PayPal COMPLETED"
+
+
+def test_a_ticketed_purchase_earns_no_promotion(env):
+    c, _, store = env
+    caps = [c.post("/api/run/ads-day").json()["steps"][-1]["result"]["capture_id"] for _ in range(authority.CLEAN_TO_PROMOTE)]
+    store.run("INSERT INTO tickets (capture_id,reason,state,created) VALUES (?,'wrong','open',0)", caps[0])
+    assert c.post("/api/reconcile").json()["promotions"] == []
+    assert agent(c, "ads")["tier"] == "active" and agent(c, "ads")["clean_count"] == 2
+
+
+def test_rereading_paypal_never_counts_a_payment_twice(env):
+    c, *_ = env
+    c.post("/api/run/ads-day")
+    for _ in range(authority.CLEAN_TO_PROMOTE + 1):
+        c.post("/api/reconcile")
+    assert agent(c, "ads")["clean_count"] == 1 and agent(c, "ads")["tier"] == "active"
+
+
 def test_review_routing_holds_large_purchase(env):
     c, pp, store = env
     store.run("UPDATE agents SET review_over_usd=10 WHERE id='ads'")

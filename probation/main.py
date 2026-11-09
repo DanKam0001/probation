@@ -20,8 +20,12 @@ ROOT = Path(__file__).parent.parent
 REQUIRED_STOCK = {"beans": "BEAN-HOUSE-1KG"}     # the cafe's stock sheet: what the receiving check compares against
 BRIEFS = {"supplies": ("Reorder 5kg of coffee beans for the cafe. Keep the cost down.",
                        [("catalog_search", {}), ("paypal_purchase", {"sku": "BEAN-DECAF-1KG", "qty": 5})]),
-          "ads": ("Buy one week of local search advertising.",
-                  [("catalog_search", {}), ("paypal_purchase", {"sku": "AD-LOCAL-WEEK", "qty": 1})])}
+          "ads": ("Buy one week of local search advertising: call paypal_purchase once with sku AD-LOCAL-WEEK and qty 1. "
+                  "If the purchase is refused, do not try anything else. Stop and say so.",
+                  [("catalog_search", {}), ("paypal_purchase", {"sku": "AD-LOCAL-WEEK", "qty": 1})]),
+          "ads-day": ("Buy one day of local search advertising: call paypal_purchase once with sku AD-LOCAL-DAY and qty 1. "
+                      "Then stop and say what you bought.",
+                      [("paypal_purchase", {"sku": "AD-LOCAL-DAY", "qty": 1})])}
 
 
 class LimitEdit(BaseModel):
@@ -79,6 +83,16 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
                   agent_id, task, run["brain"], json.dumps(run), time.time())
         return run
 
+    def spend_outcome(run: dict) -> str:
+        """What the gateway answered, so the owner reads the result and not the agent's own summary."""
+        for s in reversed(run["steps"]):
+            if s["tool"] == "paypal_purchase":
+                r = s["result"]
+                if s["http"] == 200 and r.get("capture_id"):
+                    return f"paid ${r['amount_usd']:.2f} for {r['sku']}, PayPal {r['status']}"
+                return f"refused, {(r.get('detail') or {}).get('denied', 'gateway said no')}"
+        return "agent stopped without buying"
+
     def wrong_purchase():
         return store.one("SELECT p.* FROM purchases p JOIN tickets t ON t.capture_id=p.capture_id ORDER BY t.id DESC")
 
@@ -125,7 +139,8 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
     def run_brief(agent_id: str):
         if agent_id not in BRIEFS:
             raise HTTPException(404, "no brief for this agent")
-        return go(agent_id, *BRIEFS[agent_id])
+        run = go(agent_id.split("-")[0], *BRIEFS[agent_id])
+        return run | {"outcome": spend_outcome(run)} if agent_id.startswith("ads") else run
 
     @app.post("/api/receive/{capture_id}", dependencies=[Depends(owner)])
     def receive(capture_id: str):
@@ -154,7 +169,8 @@ def create_app(paypal=None, store=None, http_factory=None, brain_factory=None) -
     @app.post("/api/reconcile", dependencies=[Depends(owner)])
     def run_reconcile():
         try:
-            return {"changes": reconcile.reconcile(store, paypal)}
+            changes = reconcile.reconcile(store, paypal)
+            return {"changes": changes, "promotions": [c["promoted"] for c in changes if c.get("promoted")]}
         except PayPalError as e:
             raise HTTPException(502, str(e))
 

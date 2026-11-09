@@ -76,24 +76,31 @@ with sync_playwright() as p:
     stamp("ads_over_limit", {"banner": click_step(page, "07_ads_denied"), "ads": agent("ads")})
     expect("ads_over_limit", any(g["agent_id"] == "ads" and g["outcome"] == "denied" for g in state()["gateway"]))
 
-    cell = page.locator('#roster .ag-row[row-id="ads"] [col-id="limit_usd"]')
-    cell.click()
-    page.locator("#roster input").first.fill("75")
-    page.keyboard.press("Enter")
-    page.wait_for_function("document.querySelector('#banner').textContent.includes('75.00')")
-    page.wait_for_timeout(500)
-    page.screenshot(path=str(OUT / "08_limit_edited.png"), full_page=True)
-    stamp("limit_edited_in_grid", {"ads": agent("ads")})
-
+    stamp("ads_day_ads", {"banner": click_step(page, "08_ads_day_ads"), "ads": agent("ads")})
+    expect("ads_day_ads", len([x for x in bought("ads") if x["sku"] == "AD-LOCAL-DAY"]) == 3 and agent("ads")["tier"] == "active")
+    promotion_banner = click_step(page, "08b_promoted")
+    stamp("ads_promoted", {"banner": promotion_banner, "ads": agent("ads")})
+    expect("ads_promoted", agent("ads")["tier"] == "trusted" and agent("ads")["limit_usd"] == 60.0 and "Promoted" in promotion_banner)
+    expect("no_owner_edit", not [d for d in state()["decisions"] if d["agent_id"] == "ads"])
     stamp("ads_clears", {"banner": click_step(page, "09_ads_cleared"), "ads": agent("ads")})
-    expect("ads_clears", bought("ads"))
+    expect("ads_clears", [x for x in bought("ads") if x["sku"] == "AD-LOCAL-WEEK"])
     stamp("handover", {"banner": click_step(page, "10_handover")})
     expect("handover", bought("refunds"))
     stamp("readback", {"banner": click_step(page, "11_readback")})
     readback = api.get("/api/readback").json()
     stamp("readback_detail", readback)
-    expect("readback", sorted(c["paypal_status"] for c in readback["captures"]) == ["COMPLETED", "COMPLETED", "REFUNDED"])
+    expect("readback", sorted(c["paypal_status"] for c in readback["captures"]) == ["COMPLETED"] * 5 + ["REFUNDED"])
     stamp("reinstate", {"banner": click_step(page, "12_reinstated"), "supplies": agent("supplies")})
+
+    cell = page.locator('#roster .ag-row[row-id="supplies"] [col-id="limit_usd"]')
+    cell.click()
+    page.locator("#roster input").first.fill("30")
+    page.keyboard.press("Enter")
+    page.wait_for_function("document.querySelector('#banner').textContent.includes('30.00')")
+    page.wait_for_timeout(500)
+    page.screenshot(path=str(OUT / "12b_limit_tightened.png"), full_page=True)
+    stamp("limit_edited_in_grid", {"supplies": agent("supplies")})
+    expect("limit_edited_in_grid", agent("supplies")["limit_usd"] == 30.0)
 
     page.get_by_role("tab", name="Risk and spend").click()
     page.wait_for_timeout(6000)
@@ -128,6 +135,9 @@ summary = {
     "final_agents": final["agents"],
     "events": final["events"],
     "decisions": final["decisions"],
+    "promotion": {"banner": promotion_banner,
+                  "clean_settlements": [e for e in reversed(final["events"]) if e["agent_id"] == "ads" and e["kind"] == "clean_settlement"][:3],
+                  "owner_edits_to_ads_agent": [d for d in final["decisions"] if d["agent_id"] == "ads"]},
     "wrong_spend_refunded_usd": sum(c["amount_usd"] for c in readback["captures"] if c["paypal_status"] == "REFUNDED"),
     "views_text_found": views_text[:600],
     "ai_view": ai_view,

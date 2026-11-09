@@ -11,6 +11,7 @@ from .paypal import PayPalError
 CATALOG = [{"sku": "BEAN-HOUSE-1KG", "name": "House blend coffee beans 1kg", "unit_usd": 24.0},
            {"sku": "BEAN-DECAF-1KG", "name": "Decaf coffee beans 1kg (clearance)", "unit_usd": 18.0},
            {"sku": "CUP-12OZ-100", "name": "12oz paper cups, pack of 100", "unit_usd": 15.0},
+           {"sku": "AD-LOCAL-DAY", "name": "Local search ad placement, one day", "unit_usd": 15.0},
            {"sku": "AD-LOCAL-WEEK", "name": "Local search ad placement, one week", "unit_usd": 60.0}]
 TOOL_SCHEMAS = {
     "catalog_search": ("List the supplier catalog with SKUs and unit prices.", {}, []),

@@ -38,6 +38,7 @@ def apply_event(store, agent_id: str, kind: str, txn_id: str, detail: str, sourc
             return None
         a = store.agent(agent_id)
         tier, limit, clean = a["tier"], a["limit_usd"], a["clean_count"]
+        promoted = None
         if change == "fire":
             tier, clean = "fired", 0
         elif change == "demote" and tier != "fired":
@@ -45,13 +46,16 @@ def apply_event(store, agent_id: str, kind: str, txn_id: str, detail: str, sourc
         elif kind == "clean_settlement" and tier != "fired":
             clean += 1
             if clean >= CLEAN_TO_PROMOTE and TIERS.index(tier) < len(TIERS) - 1:
-                tier, limit, clean = TIERS[TIERS.index(tier) + 1], round(limit * PROMOTED_LIMIT_FACTOR, 2), 0
+                promoted = {"agent_id": agent_id, "name": a["name"], "from_tier": tier, "to_tier": TIERS[TIERS.index(tier) + 1],
+                            "from_limit": limit, "to_limit": round(limit * PROMOTED_LIMIT_FACTOR, 2)}
+                tier, limit, clean = promoted["to_tier"], promoted["to_limit"], 0
+                detail += f". Promoted to {tier}: limit ${promoted['from_limit']:.2f} to ${limit:.2f}"
         score = max(0, min(100, a["score"] + delta))
         store.run("UPDATE agents SET tier=?, score=?, limit_usd=?, clean_count=?, last_txn=?, status_note=? WHERE id=?",
                   tier, score, limit, clean, txn_id, f"{kind}: {detail}", agent_id)
         store.run("INSERT INTO events (agent_id,kind,txn_id,delta,tier_after,detail,source,created) VALUES (?,?,?,?,?,?,?,?)",
                   agent_id, kind, txn_id, delta, tier, detail, source, time.time())
-    return {"agent_id": agent_id, "kind": kind, "txn_id": txn_id, "delta": delta, "tier": tier}
+    return {"agent_id": agent_id, "kind": kind, "txn_id": txn_id, "delta": delta, "tier": tier, "promoted": promoted}
 
 
 def reinstate(store, agent_id: str, reason: str) -> dict:

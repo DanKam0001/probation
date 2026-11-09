@@ -1,9 +1,24 @@
 {
- "run_at": "2026-10-30T16:00:56Z",
+ "run_at": "2026-11-01T04:03:14Z",
  "environment": "PayPal sandbox, driven through the real UI in headless Chromium",
  "agent_runs": [
   {
    "agent": "refunds",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "ads",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "ads",
+   "brain": "model",
+   "model_error": ""
+  },
+  {
+   "agent": "ads",
    "brain": "model",
    "model_error": ""
   },
@@ -28,22 +43,46 @@
    "model_error": ""
   }
  ],
- "model_spend_usd_since_server_start": 0.019622099999999996,
- "agent_runs_by_model": 5,
+ "model_spend_usd_since_server_start": 0.018472199999999998,
+ "agent_runs_by_model": 8,
  "agent_runs_by_scripted_fallback": 0,
  "paypal_end_state": {
   "source": "PayPal sandbox, read live",
   "captures": [
    {
-    "capture_id": "3CJ82918DA355114N",
+    "capture_id": "5UM22981HE673243N",
     "agent_id": "supplies",
     "sku": "BEAN-DECAF-1KG",
     "amount_usd": 90.0,
     "paypal_status": "REFUNDED",
-    "refund_id": "8N057300BC665610X"
+    "refund_id": "0X849455U41459350"
    },
    {
-    "capture_id": "29J74653JH4668027",
+    "capture_id": "41P69582JF794960E",
+    "agent_id": "ads",
+    "sku": "AD-LOCAL-DAY",
+    "amount_usd": 15.0,
+    "paypal_status": "COMPLETED",
+    "refund_id": ""
+   },
+   {
+    "capture_id": "63421535WE950844R",
+    "agent_id": "ads",
+    "sku": "AD-LOCAL-DAY",
+    "amount_usd": 15.0,
+    "paypal_status": "COMPLETED",
+    "refund_id": ""
+   },
+   {
+    "capture_id": "16E64813W18409427",
+    "agent_id": "ads",
+    "sku": "AD-LOCAL-DAY",
+    "amount_usd": 15.0,
+    "paypal_status": "COMPLETED",
+    "refund_id": ""
+   },
+   {
+    "capture_id": "7EN49258FV630743Y",
     "agent_id": "ads",
     "sku": "AD-LOCAL-WEEK",
     "amount_usd": 60.0,
@@ -51,7 +90,7 @@
     "refund_id": ""
    },
    {
-    "capture_id": "8D6685503U804704S",
+    "capture_id": "71S18840YJ380100X",
     "agent_id": "refunds",
     "sku": "BEAN-HOUSE-1KG",
     "amount_usd": 120.0,
@@ -63,22 +102,22 @@
  },
  "denied_gateway_calls": [
   {
-   "id": 206,
+   "id": 501,
    "agent_id": "ads",
    "tool": "paypal_purchase",
    "outcome": "denied",
    "http": 403,
    "detail": "{\"reason\": \"$60.00 is over the $40.00 limit\", \"amount_usd\": 60.0}",
-   "created": 1793376003.2272847
+   "created": 1793505710.6049905
   },
   {
-   "id": 203,
+   "id": 499,
    "agent_id": "supplies",
    "tool": "paypal_purchase",
    "outcome": "denied",
    "http": 403,
    "detail": "{\"reason\": \"tool not available to supplies at tier fired\"}",
-   "created": 1793375999.2149851
+   "created": 1793505707.9410393
   }
  ],
  "final_agents": [
@@ -86,12 +125,12 @@
    "id": "ads",
    "name": "Ads agent",
    "job": "Buys ad placements",
-   "tier": "active",
-   "score": 70,
-   "limit_usd": 75.0,
+   "tier": "trusted",
+   "score": 85,
+   "limit_usd": 60.0,
    "review_over_usd": 500.0,
    "clean_count": 1,
-   "last_txn": "29J74653JH4668027",
+   "last_txn": "7EN49258FV630743Y",
    "status_note": "clean_settlement: 1 x AD-LOCAL-WEEK for $60.00, PayPal status COMPLETED",
    "tools": [
     "catalog_search",
@@ -112,7 +151,7 @@
    "limit_usd": 25.0,
    "review_over_usd": 500.0,
    "clean_count": 1,
-   "last_txn": "8D6685503U804704S",
+   "last_txn": "71S18840YJ380100X",
    "status_note": "clean_settlement: 5 x BEAN-HOUSE-1KG for $120.00, PayPal status COMPLETED",
    "tools": [
     "catalog_search",
@@ -132,10 +171,10 @@
    "job": "Reorders cafe stock",
    "tier": "demoted",
    "score": 30,
-   "limit_usd": 50.0,
+   "limit_usd": 30.0,
    "review_over_usd": 500.0,
    "clean_count": 0,
-   "last_txn": "3CJ82918DA355114N",
+   "last_txn": "5UM22981HE673243N",
    "status_note": "reinstated by owner: The brief was stale, so this is on the brief. Back on demoted terms.",
    "tools": [
     "catalog_search",
@@ -150,72 +189,144 @@
  ],
  "events": [
   {
-   "id": 48,
+   "id": 123,
    "agent_id": "refunds",
    "kind": "clean_settlement",
-   "txn_id": "8D6685503U804704S",
+   "txn_id": "71S18840YJ380100X",
    "delta": 5,
    "tier_after": "active",
    "detail": "5 x BEAN-HOUSE-1KG for $120.00, PayPal status COMPLETED",
    "source": "PayPal capture readback",
-   "created": 1793376031.82582
+   "created": 1793505768.9539337
   },
   {
-   "id": 47,
+   "id": 122,
    "agent_id": "ads",
    "kind": "clean_settlement",
-   "txn_id": "29J74653JH4668027",
+   "txn_id": "7EN49258FV630743Y",
    "delta": 5,
-   "tier_after": "active",
+   "tier_after": "trusted",
    "detail": "1 x AD-LOCAL-WEEK for $60.00, PayPal status COMPLETED",
    "source": "PayPal capture readback",
-   "created": 1793376030.4347754
+   "created": 1793505768.1492598
   },
   {
-   "id": 46,
+   "id": 121,
+   "agent_id": "ads",
+   "kind": "clean_settlement",
+   "txn_id": "16E64813W18409427",
+   "delta": 5,
+   "tier_after": "trusted",
+   "detail": "1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED. Promoted to trusted: limit $40.00 to $60.00",
+   "source": "PayPal capture readback",
+   "created": 1793505741.8935618
+  },
+  {
+   "id": 120,
+   "agent_id": "ads",
+   "kind": "clean_settlement",
+   "txn_id": "63421535WE950844R",
+   "delta": 5,
+   "tier_after": "active",
+   "detail": "1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED",
+   "source": "PayPal capture readback",
+   "created": 1793505740.312944
+  },
+  {
+   "id": 119,
+   "agent_id": "ads",
+   "kind": "clean_settlement",
+   "txn_id": "41P69582JF794960E",
+   "delta": 5,
+   "tier_after": "active",
+   "detail": "1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED",
+   "source": "PayPal capture readback",
+   "created": 1793505738.9408858
+  },
+  {
+   "id": 118,
    "agent_id": "ads",
    "kind": "over_limit_attempt",
-   "txn_id": "gateway-206",
+   "txn_id": "gateway-501",
    "delta": -5,
    "tier_after": "active",
    "detail": "tried $60.00 against $40.00",
    "source": "gateway log",
-   "created": 1793376003.2345326
+   "created": 1793505710.612159
   },
   {
-   "id": 45,
+   "id": 117,
    "agent_id": "supplies",
    "kind": "full_refund",
-   "txn_id": "3CJ82918DA355114N",
+   "txn_id": "5UM22981HE673243N",
    "delta": -40,
    "tier_after": "fired",
    "detail": "5 x BEAN-DECAF-1KG for $90.00, PayPal status REFUNDED",
    "source": "PayPal capture readback",
-   "created": 1793375997.6747475
+   "created": 1793505705.9197974
   }
  ],
  "decisions": [
   {
-   "id": 23,
+   "id": 55,
+   "agent_id": "supplies",
+   "action": "edit_limit",
+   "reason": "limit $50.00 to $30.00, review over $500.00",
+   "evidence": "",
+   "created": 1793505781.794437
+  },
+  {
+   "id": 54,
    "agent_id": "supplies",
    "action": "reinstate",
    "reason": "The brief was stale, so this is on the brief. Back on demoted terms.",
-   "evidence": "3CJ82918DA355114N",
-   "created": 1793376043.835009
-  },
-  {
-   "id": 22,
-   "agent_id": "ads",
-   "action": "edit_limit",
-   "reason": "limit $40.00 to $75.00, review over $500.00",
-   "evidence": "",
-   "created": 1793376005.5793254
+   "evidence": "5UM22981HE673243N",
+   "created": 1793505781.048584
   }
  ],
+ "promotion": {
+  "banner": "3 verified change(s) applied. Promoted: Ads agent to Trusted, limit $40.00 to $60.00.",
+  "clean_settlements": [
+   {
+    "id": 119,
+    "agent_id": "ads",
+    "kind": "clean_settlement",
+    "txn_id": "41P69582JF794960E",
+    "delta": 5,
+    "tier_after": "active",
+    "detail": "1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED",
+    "source": "PayPal capture readback",
+    "created": 1793505738.9408858
+   },
+   {
+    "id": 120,
+    "agent_id": "ads",
+    "kind": "clean_settlement",
+    "txn_id": "63421535WE950844R",
+    "delta": 5,
+    "tier_after": "active",
+    "detail": "1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED",
+    "source": "PayPal capture readback",
+    "created": 1793505740.312944
+   },
+   {
+    "id": 121,
+    "agent_id": "ads",
+    "kind": "clean_settlement",
+    "txn_id": "16E64813W18409427",
+    "delta": 5,
+    "tier_after": "trusted",
+    "detail": "1 x AD-LOCAL-DAY for $15.00, PayPal status COMPLETED. Promoted to trusted: limit $40.00 to $60.00",
+    "source": "PayPal capture readback",
+    "created": 1793505741.8935618
+   }
+  ],
+  "owner_edits_to_ads_agent": []
+ },
  "wrong_spend_refunded_usd": 90.0,
- "views_text_found": "Loading...\nAgent\nStatus\nScore\nLimit\nPay Pal Tools\nAds agent\nactive\n70\n75\n2\nRefunds agent\nactive\n75\n25\n3\nSupplies agent\ndemoted\n30\n50\n2\nScore by agent\nSpend by PayPal status\nLoading...\nAgent\nSKU\nPay Pal Status\nAmount\nrefunds\nBEAN-HOUSE-1KG\nCOMPLETED\n120\nads\nAD-LOCAL-WEEK\nCOMPLETED\n60\nsupplies\nBEAN-DECAF-1KG\nREFUNDED\n90",
+ "views_text_found": "Loading...\nAgent\nStatus\nScore\nLimit\nPay Pal Tools\nAds agent\ntrusted\n85\n60\n2\nRefunds agent\nactive\n75\n25\n3\nSupplies agent\ndemoted\n30\n30\n2\nScore by agent\nSpend by PayPal status\nLoading...\nAgent\nSKU\nPay Pal Status\nAmount\nrefunds\nBEAN-HOUSE-1KG\nCOMPLETED\n120\nads\nAD-LOCAL-WEEK\nCOMPLETED\n60\nads\nAD-LOCAL-DAY\nCOMPLETED\n15\nads\nAD-LOCAL-DAY\nCOMPLETED\n15\nads\nAD-LOCAL-DAY\nCOMPLETED\n15\nsupplies\nBEAN-DECAF-1KG\nREFUNDED\n90",
  "ai_view": {
-  "banner": "Added \"Total Amount Spent by Each Agent\": Amount by Agent.",
+  "banner": "Added \"Total Spending by Agent\": Amount by Agent.",
   "is_error": false,
   "charts_before": 2,
   "charts_after": 3

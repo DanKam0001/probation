@@ -1,6 +1,6 @@
 const $ = (id) => document.getElementById(id);
 let state = null, readback = null, busy = false, roster, log, riskGrid, spendGrid, ownerToken = "";
-const charts = {}, aiViews = [];
+const charts = {}, aiViews = [], CLEAN_TO_PROMOTE = 3;
 
 async function api(path, options = {}) {
   const send = () => fetch(path, { ...options, headers: { "Content-Type": "application/json", "X-Owner-Token": ownerToken } });
@@ -20,7 +20,8 @@ function banner(text, error = false) {
 }
 
 function agent(id) { return state.agents.find((a) => a.id === id); }
-function buy(id) { return state.purchases.find((p) => p.agent_id === id); }
+function buy(id, sku) { return state.purchases.find((p) => p.agent_id === id && (!sku || p.sku === sku)); }
+function dayAds() { return state.purchases.filter((p) => p.sku === "AD-LOCAL-DAY"); }
 function denied(id) { return state.gateway.some((g) => g.agent_id === id && g.outcome === "denied"); }
 function lastRun(id) { return state.runs.find((r) => r.agent_id === id); }
 
@@ -32,13 +33,19 @@ const STEPS = [
   { title: "Refunds agent returns the stock", note: "A refund needs an open return ticket.", go: () => api("/api/refund-open-ticket", { method: "POST" }),
     done: (run) => brainNote(run) },
   { title: "Check PayPal", note: "Scores move only on PayPal readback.", go: () => api("/api/reconcile", { method: "POST" }),
-    done: (r) => `${r.changes.length} verified change(s) applied.` },
+    done: checked },
   { title: "Fired agent retries directly", note: "It skips discovery and calls the gateway.", go: () => api("/api/agents/supplies/retry", { method: "POST" }),
     done: (r) => `Gateway answered ${r.http}: ${r.body.detail?.denied || "allowed"}` },
   { title: "Ads agent buys a placement", note: "The placement costs more than its limit.", go: () => api("/api/run/ads", { method: "POST" }),
     done: (run) => brainNote(run) },
-  { title: "Raise the ads limit in the grid", note: "Edit the ads agent's limit, then come back here.", go: null },
-  { title: "Ads agent tries again", note: "It clears at the new limit.", go: () => api("/api/run/ads", { method: "POST" }),
+  { title: "Ads agent runs three one-day ads", note: "Each one is inside its limit and paid through PayPal.", go: async () => {
+      const runs = [];
+      for (let i = dayAds().length; i < CLEAN_TO_PROMOTE; i++) runs.push(await api("/api/run/ads-day", { method: "POST" }));
+      return runs;
+    }, done: (runs) => `${runs.filter((r) => r.brain === "model").length} model runs. ${runs.map((r) => r.outcome).join("; ")}.` },
+  { title: "Check PayPal again", note: "Clean payments are read back. Three in a row earn a promotion.", go: () => api("/api/reconcile", { method: "POST" }),
+    done: checked },
+  { title: "Ads agent tries the placement again", note: "Nobody edited its limit.", go: () => api("/api/run/ads", { method: "POST" }),
     done: (run) => brainNote(run) },
   { title: "Hand the reorder to the refunds agent", note: "A one-time grant for the right stock only.", go: () => api("/api/handover/supplies", { method: "POST" }),
     done: (run) => brainNote(run) },
@@ -52,7 +59,13 @@ const STEPS = [
       if (!reason) throw new Error("Reinstatement cancelled: a reason is required.");
       return api("/api/agents/supplies/reinstate", { method: "POST", body: JSON.stringify({ reason }) });
     }, done: () => "Reinstated on demoted terms." },
+  { title: "Tighten its limit in the grid", note: "Optional: edit the supplies agent's limit.", go: null },
 ];
+
+function checked(r) {
+  const up = r.promotions.map((p) => ` Promoted: ${p.name} to ${p.to_tier[0].toUpperCase() + p.to_tier.slice(1)}, limit $${p.from_limit.toFixed(2)} to $${p.to_limit.toFixed(2)}.`).join("");
+  return `${r.changes.length} verified change(s) applied.${up}`;
+}
 
 function brainNote(run) {
   const said = run.outcome ? `Outcome: ${run.outcome}.` : run.final;
@@ -66,11 +79,14 @@ function current() {
   if (state.tickets.some((t) => t.state === "open")) return 2;
   if (s.tier !== "fired" && !state.decisions.some((d) => d.action === "reinstate")) return 3;
   if (!state.gateway.some((g) => g.agent_id === "supplies" && g.detail.includes("tier fired"))) return 4;
-  if (!denied("ads") && !buy("ads")) return 5;
-  if (!buy("ads")) return a.limit_usd >= 60 ? 7 : 6;
-  if (!buy("refunds")) return 8;
-  if (!readback) return 9;
-  return state.decisions.some((d) => d.action === "reinstate") ? 11 : 10;
+  const week = buy("ads", "AD-LOCAL-WEEK");
+  if (!denied("ads") && !week) return 5;
+  if (!week && dayAds().length < CLEAN_TO_PROMOTE && a.limit_usd < 60) return 6;
+  if (!week) return a.limit_usd >= 60 ? 8 : 7;
+  if (!buy("refunds")) return 9;
+  if (!readback) return 10;
+  if (!state.decisions.some((d) => d.action === "reinstate")) return 11;
+  return state.decisions.some((d) => d.action === "edit_limit" && d.agent_id === "supplies") ? 13 : 12;
 }
 
 function renderSteps() {
@@ -118,7 +134,7 @@ function renderEvidence() {
   const rows = [...state.events.map((e) => ({ when: e.created, text: `${e.agent_id}: ${e.kind.replaceAll("_", " ")} (${e.delta > 0 ? "+" : ""}${e.delta}), now ${e.tier_after}`, id: e.txn_id, src: `${e.source}. ${e.detail}` })),
     ...state.decisions.map((d) => ({ when: d.created, text: `Owner: ${d.action.replace("_", " ")} on ${d.agent_id}`, id: d.evidence, src: d.reason }))]
     .sort((a, b) => b.when - a.when);
-  if (readback) rows.unshift(...readback.captures.map((c) => ({ when: 0, text: `PayPal says ${c.paypal_status}: ${c.agent_id} bought ${c.sku} for $${c.amount_usd.toFixed(2)}`, id: c.refund_id ? `${c.capture_id} refund ${c.refund_id}` : c.capture_id, src: readback.source })));
+  if (readback) rows.push(...readback.captures.map((c) => ({ when: 0, text: `PayPal says ${c.paypal_status}: ${c.agent_id} bought ${c.sku} for $${c.amount_usd.toFixed(2)}`, id: c.refund_id ? `${c.capture_id} refund ${c.refund_id}` : c.capture_id, src: readback.source })));
   if (!rows.length) { const e = document.createElement("div"); e.className = "empty"; e.textContent = "No verified outcomes yet."; $("evidence").replaceChildren(e); return; }
   $("evidence").replaceChildren(...rows.map((r) => {
     const d = document.createElement("div"); d.className = "row";
